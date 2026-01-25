@@ -39,3 +39,4 @@ database/maxmind/
 public/css/app-custom.css
 public/css/theme-custom.css
 pull_modules.sh
+docker-compose.yml
