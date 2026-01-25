@@ -53,7 +53,10 @@ class Controller extends BaseController
 
         $this->middleware(function ($request, $next) {
 
-            $this->checkMigrateStatus();
+            // Skip migration check for production environments
+            if (!(app()->environment('production') || config('app.env') === 'codecanyon')) {
+                $this->checkMigrateStatus();
+            }
 
 
             // To keep the session we need to move it to middleware

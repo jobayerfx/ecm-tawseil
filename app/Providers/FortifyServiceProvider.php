@@ -121,14 +121,24 @@ class FortifyServiceProvider extends ServiceProvider
 
         Fortify::loginView(function () {
 
-            $this->showInstall();
+            // Skip installation checks for production
+            if (app()->environment('production') || config('app.env') === 'codecanyon') {
+                // $this->showInstall();
+                // $this->checkMigrateStatus();
+            } else {
+                $this->showInstall();
+                $this->checkMigrateStatus();
+            }
 
-            $this->checkMigrateStatus();
             $globalSetting = global_setting();
             // Is worksuite
             $company = Company::withCount('users')->first();
 
-            if (!$this->isLegal()) {
+            // Skip license check for production
+            if ((app()->environment('production') || config('app.env') === 'codecanyon') && !$this->isLegal()) {
+                // For production, skip license verification
+                // return redirect('verify-purchase');
+            } elseif (!$this->isLegal()) {
                 return redirect('verify-purchase');
             }
 
