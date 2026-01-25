@@ -1,4 +1,3 @@
-# Use PHP 8.2 FPM (Debian-based)
 FROM php:8.2-fpm
 
 # Set working directory
@@ -23,27 +22,33 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl xsl
+RUN docker-php-ext-install \
+    pdo_mysql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    zip \
+    intl \
+    xsl
 
-# Get Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copy app code
-COPY . /var/www/html
-COPY --chown=www-data:www-data . /var/www/html
+# Copy application code
+COPY . .
 
-# Create required directories first
-RUN mkdir -p /var/www/html/bootstrap/cache \
-    && mkdir -p /var/www/html/storage \
-    && chown -R www-data:www-data /var/www/html/bootstrap/cache /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache /var/www/html/storage
+# Create Laravel required dirs BEFORE composer
+RUN mkdir -p storage bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
-# Install PHP dependencies
+# Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions
+# Final permissions
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+    && chmod -R 775 storage bootstrap/cache
 
-# Expose port for internal use
 EXPOSE 9000
