@@ -32,6 +32,12 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . /var/www/html
 COPY --chown=www-data:www-data . /var/www/html
 
+# Create required directories first
+RUN mkdir -p /var/www/html/bootstrap/cache \
+    && mkdir -p /var/www/html/storage \
+    && chown -R www-data:www-data /var/www/html/bootstrap/cache /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache /var/www/html/storage
+
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
