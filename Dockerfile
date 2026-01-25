@@ -20,7 +20,8 @@ RUN composer install --no-dev --optimize-autoloader \
  && php artisan storage:link || true
 
 # Permissions
-RUN chown -R www-data:www-data storage bootstrap/cache \
+RUN mkdir -p storage bootstrap/cache \
+ && chown -R www-data:www-data storage bootstrap/cache \
  && chmod -R 775 storage bootstrap/cache
 
 EXPOSE 9000
