@@ -1,27 +1,43 @@
+# Use PHP 8.2 FPM (Debian-based)
 FROM php:8.2-fpm
 
+# Set working directory
 WORKDIR /var/www/html
 
-# System deps
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git curl unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    libicu-dev \       # <-- for intl
+    libxslt-dev \      # <-- for xsl
+    nodejs \
+    npm \
+    supervisor \
+    nginx \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl xsl
 
-# App files
+# Get Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copy app code
 COPY . /var/www/html
-RUN chown -R www-data:www-data /var/www/html
+COPY --chown=www-data:www-data . /var/www/html
 
-# Laravel setup
-RUN composer install --no-dev --optimize-autoloader \
- && php artisan storage:link || true
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader
 
-# Permissions
-RUN mkdir -p storage bootstrap/cache \
- && chown -R www-data:www-data storage bootstrap/cache \
- && chmod -R 775 storage bootstrap/cache
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Expose port for internal use
 EXPOSE 9000
