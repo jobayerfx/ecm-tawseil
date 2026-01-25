@@ -14,8 +14,8 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
     unzip \
-    libicu-dev \       # <-- for intl
-    libxslt-dev \      # <-- for xsl
+    libicu-dev \      # for intl extension
+    libxslt-dev \     # for xsl extension
     nodejs \
     npm \
     supervisor \
