@@ -1,0 +1,13 @@
+{
+    "name": "Onboarding",
+    "alias": "Onboarding",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Onboarding\\Providers\\EventServiceProvider",
+        "Modules\\Onboarding\\Providers\\OnboardingServiceProvider",
+        "Modules\\Onboarding\\Providers\\RouteServiceProvider"
+    ],
+    "files": []
+}

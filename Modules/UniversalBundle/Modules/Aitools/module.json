@@ -1,0 +1,13 @@
+{
+    "name": "Aitools",
+    "alias": "aitools",
+    "description": "AI Tools module for ChatGPT integration and usage tracking",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Aitools\\Providers\\AitoolsServiceProvider",
+        "Modules\\Aitools\\Providers\\RouteServiceProvider"
+    ],
+    "files": []
+}
+

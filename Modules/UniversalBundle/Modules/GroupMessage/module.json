@@ -1,0 +1,12 @@
+{
+    "name": "GroupMessage",
+    "alias": "groupmessage",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\GroupMessage\\Providers\\GroupMessageServiceProvider",
+        "Modules\\GroupMessage\\Providers\\EventServiceProvider"
+    ],
+    "files": []
+}

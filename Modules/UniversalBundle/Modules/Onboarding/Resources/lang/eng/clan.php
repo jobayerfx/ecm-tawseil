@@ -1,0 +1,41 @@
+<?php
+
+return [
+    'menu' => [
+        'title' => 'Title',
+        'createOffboardingTask' => 'Create Offboarding Task',
+        'createOnboardingTask' => 'Create Onboarding Task',
+        'taskFor' => 'Task for',
+        'employee' => 'Employee',
+        'company' => 'Company',
+        'employeeCanSee' => 'Employee Can See',
+        'editOffboardingTask' => 'Edit Offboarding Task',
+        'editOnboardingTask' => 'Edit Onboarding Task',
+        'onboardingSettings' => 'Onboarding Settings',
+        'offboardingSettings' => 'Offboarding Settings',
+        'onOffboardingSettings' => 'Onboarding / Offboarding Settings',
+        'addOnboardingTask' => 'Add onboarding task',
+        'addOffboardingTask' => 'Add offboarding task',
+        'onboarding' => 'Onboarding',
+        'completeTask' => 'Complete Task',
+        'file' => 'File',
+        'completed_on' => 'Completed on',
+        'onboardingTask' => 'Onboarding Task',
+        'offboardingTask' => 'Offboarding Task',
+        'action' => 'Action',
+        'onboardingUsers' => 'Onboarding Users',
+        'offboardingUsers' => 'Offboarding Users',
+        'notificationSetting' => 'Notification Setting'
+    ],
+    'startOnboarding' => 'Start Onboarding',
+    'startOffboarding' => 'Start Offboarding',
+    'viewFile' => 'View File',
+    'onboardingBtnNote' => 'The "Start Onboarding" button is located on the employee\'s profile page.',
+    'offboardingBtnNote' => 'The "Start Offboarding" button is located on the employee\'s profile page.',
+    'onboard-notification' => 'Onboarding Notification To The Employee',
+    'offboard-notification' => 'Offboarding Notification To The Employee',
+    'onboardingTasks' => 'Onboarding Tasks',
+    'offboardingTasks' => 'Offboarding Tasks',
+    'submittedOn' => 'Submitted',
+
+];

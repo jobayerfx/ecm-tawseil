@@ -254,6 +254,7 @@ return [
         Barryvdh\TranslationManager\ManagerServiceProvider::class,
         Macellan\Zip\ZipServiceProvider::class,
         Froiden\LaravelInstaller\Providers\LaravelInstallerServiceProvider::class,
+        App\Providers\ModuleVerifyOverrideServiceProvider::class,
     ],
 
     /*

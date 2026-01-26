@@ -1,0 +1,14 @@
+{
+    "name": "ServerManager",
+    "alias": "servermanager",
+    "description": "Comprehensive server management module for hosting and domain management",
+    "keywords": ["server", "hosting", "domain", "management"],
+    "order": 0,
+    "providers": [
+        "Modules\\ServerManager\\Providers\\ServerManagerServiceProvider",
+        "Modules\\ServerManager\\Providers\\EventServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
