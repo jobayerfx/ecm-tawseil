@@ -512,31 +512,37 @@ class ProposalController extends AccountBaseController
         $this->company = $this->proposal->company;
 
         // Enhanced DomPDF configuration for better PDF generation
+        // $pdf = new Dompdf([
+        //     'defaultFont' => 'DejaVu Sans',
+        //     'isHtml5ParserEnabled' => true,
+        //     'isRemoteEnabled' => true,
+        //     'tempDir' => storage_path('app/dompdf'),
+        //     'logOutputFile' => storage_path('logs/dompdf.log'),
+        //     'fontCache' => storage_path('fonts'),
+        //     'chroot' => base_path(),
+        //     'allowedProtocols' => [
+        //         'file://' => ['rules' => []],
+        //         'http://' => ['rules' => []],
+        //         'https://' => ['rules' => []]
+        //     ],
+        //     'enableFontSubsetting' => false,
+        //     'pdfBackend' => 'CPDF',
+        //     'dpi' => 100,
+        //     'defaultMediaType' => 'screen',
+        //     'defaultPaperSize' => 'a4',
+        //     'defaultPaperOrientation' => 'portrait',
+        //     'enablePhp' => false,
+        //     'enableJavascript' => true,
+        //     'enableRemote' => true,
+        //     'fontHeightRatio' => 1.0,
+        //     'enableHtml5Parser' => true,
+        // ]);
+
         $pdf = new Dompdf([
             'defaultFont' => 'DejaVu Sans',
             'isHtml5ParserEnabled' => true,
             'isRemoteEnabled' => true,
             'tempDir' => '/tmp/dompdf',
-            // 'tempDir' => storage_path('app/dompdf'),
-            // 'logOutputFile' => storage_path('logs/dompdf.log'),
-            // 'fontCache' => storage_path('fonts'),
-            // 'chroot' => base_path(),
-            // 'allowedProtocols' => [
-            //     'file://' => ['rules' => []],
-            //     'http://' => ['rules' => []],
-            //     'https://' => ['rules' => []]
-            // ],
-            // 'enableFontSubsetting' => false,
-            // 'pdfBackend' => 'CPDF',
-            // 'dpi' => 100,
-            // 'defaultMediaType' => 'screen',
-            // 'defaultPaperSize' => 'a4',
-            // 'defaultPaperOrientation' => 'portrait',
-            // 'enablePhp' => false,
-            // 'enableJavascript' => true,
-            // 'enableRemote' => true,
-            // 'fontHeightRatio' => 1.0,
-            // 'enableHtml5Parser' => true,
         ]);
 
         // Validate template file exists
