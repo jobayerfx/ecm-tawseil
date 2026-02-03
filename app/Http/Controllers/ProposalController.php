@@ -519,23 +519,23 @@ class ProposalController extends AccountBaseController
             'tempDir' => storage_path('app/dompdf'),
             'logOutputFile' => storage_path('logs/dompdf.log'),
             'fontCache' => storage_path('fonts'),
-            'chroot' => base_path(),
-            'allowedProtocols' => [
-                'file://' => ['rules' => []],
-                'http://' => ['rules' => []],
-                'https://' => ['rules' => []]
-            ],
-            'enableFontSubsetting' => false,
-            'pdfBackend' => 'CPDF',
-            'dpi' => 100,
-            'defaultMediaType' => 'screen',
-            'defaultPaperSize' => 'a4',
-            'defaultPaperOrientation' => 'portrait',
-            'enablePhp' => false,
-            'enableJavascript' => true,
-            'enableRemote' => true,
-            'fontHeightRatio' => 1.0,
-            'enableHtml5Parser' => true,
+            // 'chroot' => base_path(),
+            // 'allowedProtocols' => [
+            //     'file://' => ['rules' => []],
+            //     'http://' => ['rules' => []],
+            //     'https://' => ['rules' => []]
+            // ],
+            // 'enableFontSubsetting' => false,
+            // 'pdfBackend' => 'CPDF',
+            // 'dpi' => 100,
+            // 'defaultMediaType' => 'screen',
+            // 'defaultPaperSize' => 'a4',
+            // 'defaultPaperOrientation' => 'portrait',
+            // 'enablePhp' => false,
+            // 'enableJavascript' => true,
+            // 'enableRemote' => true,
+            // 'fontHeightRatio' => 1.0,
+            // 'enableHtml5Parser' => true,
         ]);
 
         // Validate template file exists
