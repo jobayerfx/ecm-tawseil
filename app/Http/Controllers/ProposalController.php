@@ -515,7 +515,7 @@ class ProposalController extends AccountBaseController
         $pdf->setOption('enable_php', true);
         $pdf->setOption('isHtml5ParserEnabled', true);
         $pdf->setOption('isRemoteEnabled', true);
-        $pdf->setOption('currentFont', 'helvetica');
+        $pdf->set_option('defaultFont', 'DejaVu Sans');
 
         // Validate template file exists
         $templateView = 'proposals.pdf.' . $this->invoiceSetting->template;
