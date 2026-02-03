@@ -19,6 +19,7 @@ use App\Models\ProposalTemplate;
 use App\Models\ProposalItemImage;
 use Illuminate\Support\Facades\App;
 use App\Models\ProposalTemplateItem;
+use App\Models\InvoiceSetting;
 use App\DataTables\ProposalDataTable;
 use App\Http\Requests\Proposal\StoreRequest;
 use App\Models\Lead;
@@ -381,8 +382,8 @@ class ProposalController extends AccountBaseController
 
     public function domPdfObjectForDownload($id)
     {
-        $this->invoiceSetting = invoice_setting();
         $this->proposal = Proposal::with('items', 'lead', 'lead.contact', 'currency')->findOrFail($id);
+        $this->invoiceSetting = InvoiceSetting::withoutGlobalScopes()->where('company_id', $this->proposal->company_id)->first();
         App::setLocale($this->invoiceSetting->locale ?? 'en');
         Carbon::setLocale($this->invoiceSetting->locale ?? 'en');
 
@@ -403,8 +404,6 @@ class ProposalController extends AccountBaseController
         $items = ProposalItem::whereNotNull('taxes')
             ->where('proposal_id', $this->proposal->id)
             ->get();
-
-        $this->invoiceSetting = invoice_setting();
 
         foreach ($items as $item) {
 
