@@ -376,7 +376,13 @@ class ProposalController extends AccountBaseController
         $pdfOption = $this->domPdfObjectForDownload($id);
         $pdf = $pdfOption['pdf'];
         $filename = $pdfOption['fileName'];
-        return $pdf->download($filename . '.pdf');
+
+        $pdf->setOption('tempDir', '/tmp/dompdf');
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $filename . '.pdf');
+        // return $pdf->download($filename . '.pdf');
     }
 
     public function domPdfObjectForDownload($id)
