@@ -36,25 +36,6 @@ RUN docker-php-ext-install \
     intl \
     xsl
 
-
-# Install dependencies for wkhtmltopdf
-RUN apt-get update && apt-get install -y \
-    xfonts-75dpi \
-    xfonts-base \
-    fontconfig \
-    libxrender1 \
-    libxext6 \
-    libssl1.1 \
-    libjpeg62-turbo \
-    && rm -rf /var/lib/apt/lists/*
-
-# Download and install wkhtmltopdf stable (0.12.6)
-RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb \
-    && dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb \
-    && apt-get -f install -y \
-    && mv /usr/local/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf \
-    && rm wkhtmltox_0.12.6-1.buster_amd64.deb
-
 # Copy wkhtmltopdf binary from the dedicated image
 COPY --from=wkhtml /bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
 
