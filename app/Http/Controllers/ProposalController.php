@@ -516,6 +516,7 @@ class ProposalController extends AccountBaseController
         $pdf->setOption('isHtml5ParserEnabled', true);
         $pdf->setOption('isRemoteEnabled', true);
         $pdf->set_option('defaultFont', 'DejaVu Sans');
+        $pdf->setOption('tempDir', '/tmp/dompdf');
 
         // Validate template file exists
         $templateView = 'proposals.pdf.' . $this->invoiceSetting->template;
@@ -525,7 +526,7 @@ class ProposalController extends AccountBaseController
         }
 
         $customCss = '<style>
-                * { text-transform: none !important; }
+                * { text-transform: none !important; font-family: DejaVu Sans !important; }
             </style>';
 
         $pdf->loadHTML($customCss . view($templateView, $this->data)->render());
