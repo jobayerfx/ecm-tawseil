@@ -23,7 +23,6 @@ use App\Models\InvoiceSetting;
 use App\DataTables\ProposalDataTable;
 use App\Http\Requests\Proposal\StoreRequest;
 use App\Models\Lead;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProposalController extends AccountBaseController
 {
@@ -377,6 +376,7 @@ class ProposalController extends AccountBaseController
         $pdfOption = $this->domPdfObjectForDownload($id);
         $pdf = $pdfOption['pdf'];
         $filename = $pdfOption['fileName'];
+        return $filename;
         return $pdf->download($filename . '.pdf');
     }
 
@@ -439,22 +439,18 @@ class ProposalController extends AccountBaseController
 
         $this->company = $this->proposal->company;
 
-        // $pdf = app('dompdf.wrapper');
+        $pdf = app('dompdf.wrapper');
 
-        // $pdf = Pdf::loadView('pdf.invoice', $data);
-        // $pdf = App::make('dompdf.wrapper');
-        
-
-        // $pdf->setOption('enable_php', true);
-        // $pdf->setOption('isHtml5ParserEnabled', true);
-        // $pdf->setOption('isRemoteEnabled', true);
+        $pdf->setOption('enable_php', true);
+        $pdf->setOption('isHtml5ParserEnabled', true);
+        $pdf->setOption('isRemoteEnabled', true);
 
         // $pdf->loadView('proposals.pdf.' . $this->invoiceSetting->template, $this->data);
         $customCss = '<style>
                 * { text-transform: none !important; }
             </style>';
 
-        $pdf = Pdf::loadHTML($customCss . view('proposals.pdf.' . $this->invoiceSetting->template, $this->data)->render());
+        $pdf->loadHTML($customCss . view('proposals.pdf.' . $this->invoiceSetting->template, $this->data)->render());
 
         $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
 
