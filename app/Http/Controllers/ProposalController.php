@@ -537,6 +537,7 @@ class ProposalController extends AccountBaseController
             'enableRemote' => true,
             'fontHeightRatio' => 1.0,
             'enableHtml5Parser' => true,
+            'isFontSubsettingEnabled' => true,
         ]);
 
         // $pdf->setOption('enable_php', true);
@@ -558,6 +559,8 @@ class ProposalController extends AccountBaseController
                     font-family: DejaVu Sans, Arial, sans-serif !important; 
                     font-size: 18px;
                     line-height: 1.2;
+                    direction: rtl;
+                    unicode-bidi: embed;
                 }
                 * { 
                     text-transform: none !important; 
