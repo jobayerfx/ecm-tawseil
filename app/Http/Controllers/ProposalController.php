@@ -369,7 +369,6 @@ class ProposalController extends AccountBaseController
 
     public function download($id)
     {
-        dd('download', $id);
         $this->proposal = Proposal::with('unit')->findOrFail($id);
         $this->viewLeadProposalsPermission = user()->permission('view_lead_proposals');
         abort_403(!($this->viewLeadProposalsPermission == 'all' || ($this->viewLeadProposalsPermission == 'added' && $this->proposal->added_by == user()->id)));
@@ -385,6 +384,7 @@ class ProposalController extends AccountBaseController
     {
         $this->proposal = Proposal::with('items', 'lead', 'lead.contact', 'currency')->findOrFail($id);
         $this->invoiceSetting = InvoiceSetting::withoutGlobalScopes()->where('company_id', $this->proposal->company_id)->first();
+        dd($this->invoiceSetting);
         App::setLocale($this->invoiceSetting->locale ?? 'en');
         Carbon::setLocale($this->invoiceSetting->locale ?? 'en');
 
