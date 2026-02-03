@@ -23,6 +23,7 @@ use App\Models\InvoiceSetting;
 use App\DataTables\ProposalDataTable;
 use App\Http\Requests\Proposal\StoreRequest;
 use App\Models\Lead;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProposalController extends AccountBaseController
 {
@@ -440,49 +441,27 @@ class ProposalController extends AccountBaseController
 
         // $pdf = app('dompdf.wrapper');
 
-        // $pdf->setOption('enable_php', true);
-        // $pdf->setOption('isHtml5ParserEnabled', true);
-        // $pdf->setOption('isRemoteEnabled', true);
+        // $pdf = Pdf::loadView('pdf.invoice', $data);
+        $pdf = App::make('dompdf.wrapper');
 
-        // // $pdf->loadView('proposals.pdf.' . $this->invoiceSetting->template, $this->data);
-        // $customCss = '<style>
-        //         * { text-transform: none !important; }
-        //     </style>';
+        $pdf->setOption('enable_php', true);
+        $pdf->setOption('isHtml5ParserEnabled', true);
+        $pdf->setOption('isRemoteEnabled', true);
 
-        // $pdf->loadHTML($customCss . view('proposals.pdf.' . $this->invoiceSetting->template, $this->data)->render());
-
-        // $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
-
-        // return [
-        //     'pdf' => $pdf,
-        //     'fileName' => $filename
-        // ];
-
-
-        try {
-            $pdf = app('dompdf.wrapper');
-            $pdf->setOption('enable_php', true);
-            $pdf->setOption('isHtml5ParserEnabled', true);
-            $pdf->setOption('isRemoteEnabled', true);
-        
-            // $pdf->loadView('proposals.pdf.' . $this->invoiceSetting->template, $this->data);
-            $customCss = '<style>
+        // $pdf->loadView('proposals.pdf.' . $this->invoiceSetting->template, $this->data);
+        $customCss = '<style>
                 * { text-transform: none !important; }
             </style>';
 
-            $html = $customCss . view('proposals.pdf.' . $this->invoiceSetting->template, $this->data)->render();
-            $pdf->loadHTML($html);
-        
-            $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
-        
-            return [
-                'pdf' => $pdf,
-                'fileName' => $filename
-            ];
-        } catch (\Throwable $e) {
-            \Log::error('PDF generation failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            abort(401, 'PDF generation failed.');
-        }
+        $pdf->loadHTML($customCss . view('proposals.pdf.' . $this->invoiceSetting->template, $this->data)->render());
+
+        $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
+
+        return [
+            'pdf' => $pdf,
+            'fileName' => $filename
+        ];
+
     }
 
     public function deleteProposalItemImage(Request $request)
