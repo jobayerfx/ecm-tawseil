@@ -442,18 +442,19 @@ class ProposalController extends AccountBaseController
         // $pdf = app('dompdf.wrapper');
 
         // $pdf = Pdf::loadView('pdf.invoice', $data);
-        $pdf = App::make('dompdf.wrapper');
+        // $pdf = App::make('dompdf.wrapper');
+        
 
-        $pdf->setOption('enable_php', true);
-        $pdf->setOption('isHtml5ParserEnabled', true);
-        $pdf->setOption('isRemoteEnabled', true);
+        // $pdf->setOption('enable_php', true);
+        // $pdf->setOption('isHtml5ParserEnabled', true);
+        // $pdf->setOption('isRemoteEnabled', true);
 
         // $pdf->loadView('proposals.pdf.' . $this->invoiceSetting->template, $this->data);
         $customCss = '<style>
                 * { text-transform: none !important; }
             </style>';
 
-        $pdf->loadHTML($customCss . view('proposals.pdf.' . $this->invoiceSetting->template, $this->data)->render());
+        $pdf = Pdf::loadHTML($customCss . view('proposals.pdf.' . $this->invoiceSetting->template, $this->data)->render());
 
         $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
 
