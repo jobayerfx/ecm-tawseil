@@ -516,9 +516,10 @@ class ProposalController extends AccountBaseController
             'defaultFont' => 'DejaVu Sans',
             'isHtml5ParserEnabled' => true,
             'isRemoteEnabled' => true,
-            'tempDir' => storage_path('app/dompdf'),
-            'logOutputFile' => storage_path('logs/dompdf.log'),
-            'fontCache' => storage_path('fonts'),
+            'tempDir' => '/tmp/dompdf',
+            // 'tempDir' => storage_path('app/dompdf'),
+            // 'logOutputFile' => storage_path('logs/dompdf.log'),
+            // 'fontCache' => storage_path('fonts'),
             // 'chroot' => base_path(),
             // 'allowedProtocols' => [
             //     'file://' => ['rules' => []],
