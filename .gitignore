@@ -42,3 +42,4 @@ pull_modules.sh
 docker-compose.yml
 package-lock.json
 composer.lock
+/Modules/
