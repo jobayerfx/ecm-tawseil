@@ -376,7 +376,6 @@ class ProposalController extends AccountBaseController
         $pdfOption = $this->domPdfObjectForDownload($id);
         $pdf = $pdfOption['pdf'];
         $filename = $pdfOption['fileName'];
-        dd($filename);
         return $pdf->download($filename . '.pdf');
     }
 
