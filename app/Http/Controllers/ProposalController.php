@@ -553,7 +553,23 @@ class ProposalController extends AccountBaseController
         }
 
         $customCss = '<style>
-                * { text-transform: none !important; font-family: DejaVu Sans !important; }
+                @page { margin: 50px; }
+                body { 
+                    font-family: DejaVu Sans, Arial, sans-serif !important; 
+                    font-size: 18px;
+                    line-height: 1.2;
+                }
+                * { 
+                    text-transform: none !important; 
+                    font-family: DejaVu Sans, Arial, sans-serif !important; 
+                }
+                h1, h2, h3, h4, h5, h6 {
+                    font-family: DejaVu Sans, Arial, sans-serif !important;
+                    font-weight: bold;
+                }
+ 
+                .description { font-family: DejaVu Sans, Arial, sans-serif !important; }
+                .word-break { word-wrap: break-word; word-break: break-all; }
             </style>';
 
         $pdf->loadHTML($customCss . view($templateView, $this->data)->render());
