@@ -374,10 +374,9 @@ class ProposalController extends AccountBaseController
         abort_403(!($this->viewLeadProposalsPermission == 'all' || ($this->viewLeadProposalsPermission == 'added' && $this->proposal->added_by == user()->id)));
 
         $pdfOption = $this->domPdfObjectForDownload($id);
-        dd($pdfOption);
         $pdf = $pdfOption['pdf'];
         $filename = $pdfOption['fileName'];
-
+        dd($filename);
         return $pdf->download($filename . '.pdf');
     }
 
