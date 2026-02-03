@@ -511,32 +511,7 @@ class ProposalController extends AccountBaseController
 
         $this->company = $this->proposal->company;
 
-        // Enhanced DomPDF configuration for better PDF generation
-        // $pdf = new Dompdf([
-        //     'defaultFont' => 'DejaVu Sans',
-        //     'isHtml5ParserEnabled' => true,
-        //     'isRemoteEnabled' => true,
-        //     'tempDir' => storage_path('app/dompdf'),
-        //     'logOutputFile' => storage_path('logs/dompdf.log'),
-        //     'fontCache' => storage_path('fonts'),
-        //     'chroot' => base_path(),
-        //     'allowedProtocols' => [
-        //         'file://' => ['rules' => []],
-        //         'http://' => ['rules' => []],
-        //         'https://' => ['rules' => []]
-        //     ],
-        //     'enableFontSubsetting' => false,
-        //     'pdfBackend' => 'CPDF',
-        //     'dpi' => 100,
-        //     'defaultMediaType' => 'screen',
-        //     'defaultPaperSize' => 'a4',
-        //     'defaultPaperOrientation' => 'portrait',
-        //     'enablePhp' => false,
-        //     'enableJavascript' => true,
-        //     'enableRemote' => true,
-        //     'fontHeightRatio' => 1.0,
-        //     'enableHtml5Parser' => true,
-        // ]);
+        // $pdf = app('dompdf.wrapper');
 
         $pdf = new Dompdf([
             'defaultFont' => 'DejaVu Sans',
@@ -545,6 +520,12 @@ class ProposalController extends AccountBaseController
             'tempDir' => '/tmp/dompdf',
         ]);
 
+        // $pdf->setOption('enable_php', true);
+        // $pdf->setOption('isHtml5ParserEnabled', true);
+        // $pdf->setOption('isRemoteEnabled', true);
+        // $pdf->set_option('defaultFont', 'DejaVu Sans');
+        // $pdf->setOption('tempDir', '/tmp/dompdf');
+
         // Validate template file exists
         $templateView = 'proposals.pdf.' . $this->invoiceSetting->template;
         
@@ -552,55 +533,11 @@ class ProposalController extends AccountBaseController
             throw new \Exception('Template view not found: ' . $templateView);
         }
 
-        // Enhanced CSS for better PDF rendering
         $customCss = '<style>
-                @page { margin: 50px; }
-                body { 
-                    font-family: DejaVu Sans, Arial, sans-serif !important; 
-                    font-size: 18px;
-                    line-height: 1.2;
-                }
-                * { 
-                    text-transform: none !important; 
-                    font-family: DejaVu Sans, Arial, sans-serif !important; 
-                }
-                h1, h2, h3, h4, h5, h6 {
-                    font-family: DejaVu Sans, Arial, sans-serif !important;
-                    font-weight: bold;
-                }
-                
-                .description { font-family: DejaVu Sans, Arial, sans-serif !important; }
-                .word-break { word-wrap: break-word; word-break: break-all; }
+                * { text-transform: none !important; font-family: DejaVu Sans !important; }
             </style>';
 
-        // Get the rendered HTML content
-        $htmlContent = $customCss . view($templateView, $this->data)->render();
-        
-        // Log the HTML content for debugging (first 1000 chars)
-        // Log::info('PDF HTML Content Preview', [
-        //     'proposal_id' => $id,
-        //     'html_preview' => substr($htmlContent, 0, 1000),
-        //     'html_length' => strlen($htmlContent)
-        // ]);
-
-        // Load HTML with error handling
-        try {
-            $pdf->loadHtml($htmlContent);
-            
-            // Set paper size and orientation
-            $pdf->setPaper('a4', 'portrait');
-            
-            // Render the PDF
-            $pdf->render();
-            
-        } catch (\Exception $e) {
-            Log::error('PDF rendering failed', [
-                'proposal_id' => $id,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            throw $e;
-        }
+        $pdf->loadHTML($customCss . view($templateView, $this->data)->render());
 
         $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
 
