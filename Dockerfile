@@ -1,3 +1,6 @@
+# -------- wkhtmltopdf (stable source) --------
+FROM surnet/alpine-wkhtmltopdf:3.19-0.12.6-full AS wkhtml
+
 FROM php:8.2-fpm
 
 # Set working directory
@@ -33,22 +36,10 @@ RUN docker-php-ext-install \
     intl \
     xsl
 
-# Install wkhtmltopdf (correct build for modern Debian/Ubuntu)
-RUN apt-get update && apt-get install -y \
-    wget \
-    xfonts-75dpi \
-    xfonts-base \
-    fontconfig \
-    libxrender1 \
-    libxext6 \
-    libfontconfig1 \
-    libssl3 \
-    && wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-1/wkhtmltox_0.12.6.1-1.jammy_amd64.deb \
-    && dpkg -i wkhtmltox_0.12.6.1-1.jammy_amd64.deb \
-    && apt-get -f install -y \
-    && rm wkhtmltox_0.12.6.1-1.jammy_amd64.deb
+# Copy wkhtmltopdf binary
+COPY --from=wkhtml /bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
 
-# Install Composer
+# Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Copy application code
