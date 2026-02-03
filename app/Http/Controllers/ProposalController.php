@@ -384,7 +384,6 @@ class ProposalController extends AccountBaseController
     {
         $this->proposal = Proposal::with('items', 'lead', 'lead.contact', 'currency')->findOrFail($id);
         $this->invoiceSetting = InvoiceSetting::withoutGlobalScopes()->where('company_id', $this->proposal->company_id)->first();
-        dd($this->invoiceSetting);
         App::setLocale($this->invoiceSetting->locale ?? 'en');
         Carbon::setLocale($this->invoiceSetting->locale ?? 'en');
 
@@ -439,6 +438,8 @@ class ProposalController extends AccountBaseController
         $this->taxes = $taxList;
 
         $this->company = $this->proposal->company;
+
+        dd( $this->data );
 
         // $pdf = app('dompdf.wrapper');
 
