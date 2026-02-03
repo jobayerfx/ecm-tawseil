@@ -1,1 +1,0 @@
-<x-onboarding::boarding-users/>
