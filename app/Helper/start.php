@@ -1098,7 +1098,11 @@ if (!function_exists('pdfStripTags')) {
 
     function pdfStripTags($text)
     {
-        return strip_tags($text, [
+        // Ensure the text is properly formatted for PDF generation
+        // This function is called during PDF generation when DomPDF processes HTML content
+        
+        // First, strip all HTML tags except the allowed ones
+        $allowedTags = [
             'p',
             'b',
             'strong',
@@ -1115,7 +1119,20 @@ if (!function_exists('pdfStripTags')) {
             'h3',
             'h4',
             'h5',
-        ]);
+        ];
+        
+        $result = strip_tags($text, '<' . implode('><', $allowedTags) . '>');
+        
+        // Clean up any remaining problematic characters that might cause PDF generation issues
+        $result = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $result);
+        
+        // Replace multiple spaces with single space
+        $result = preg_replace('/\s+/', ' ', $result);
+        
+        // Trim whitespace
+        $result = trim($result);
+        
+        return $result;
     }
 }
 
