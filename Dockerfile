@@ -1,7 +1,7 @@
-# -------- wkhtmltopdf builder --------
-FROM eko/wkhtmltopdf-alpine AS wkhtml
+# -------- wkhtmltopdf base --------
+FROM surnet/alpine-wkhtmltopdf:3.23.2-024b2b2-full AS wkhtml
 
-# -------- main app image --------
+# -------- App Image --------
 FROM php:8.2-fpm
 
 WORKDIR /var/www/html
@@ -36,12 +36,11 @@ RUN docker-php-ext-install \
     intl \
     xsl
 
-# Copy wkhtmltopdf binaries from builder image
-COPY --from=wkhtml /usr/local/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
-COPY --from=wkhtml /usr/local/bin/wkhtmltoimage /usr/local/bin/wkhtmltoimage
+# Copy wkhtmltopdf binary from the dedicated image
+COPY --from=wkhtml /bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
 
-# Verify binary execution permission
-RUN chmod +x /usr/local/bin/wkhtmltopdf && chmod +x /usr/local/bin/wkhtmltoimage
+# Ensure binary is executable
+RUN chmod +x /usr/local/bin/wkhtmltopdf
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -49,16 +48,16 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Copy application code
 COPY . .
 
-# Create required directories
+# Create required Laravel directories
 RUN mkdir -p storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# Install composer deps
+# Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
 # Final permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
-EXPOSE 9000
+EXPOSE 9000    
