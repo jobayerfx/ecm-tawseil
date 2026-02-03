@@ -415,8 +415,21 @@ class ProposalController extends AccountBaseController
     {
         $this->proposal = Proposal::with('items', 'lead', 'lead.contact', 'currency')->findOrFail($id);
         $this->invoiceSetting = InvoiceSetting::withoutGlobalScopes()->where('company_id', $this->proposal->company_id)->first();
-        App::setLocale($this->invoiceSetting->locale ?? 'en');
-        Carbon::setLocale($this->invoiceSetting->locale ?? 'en');
+
+        // Validate invoice setting exists
+        if (!$this->invoiceSetting) {
+            throw new \Exception('Invoice settings not found for company ID: ' . $this->proposal->company_id);
+        }
+
+        // Validate template exists
+        if (empty($this->invoiceSetting->template)) {
+            throw new \Exception('Invoice template not configured for company ID: ' . $this->proposal->company_id);
+        }
+
+        // Set locale with fallback
+        $locale = $this->invoiceSetting->locale ?? 'en';
+        App::setLocale($locale);
+        Carbon::setLocale($locale);
 
         if ($this->proposal->discount > 0) {
             if ($this->proposal->discount_type == 'percent') {
@@ -438,28 +451,35 @@ class ProposalController extends AccountBaseController
 
         foreach ($items as $item) {
 
-            foreach (json_decode($item->taxes) as $tax) {
-                $this->tax = ProposalItem::taxbyid($tax)->first();
+            // Validate taxes is not null or empty
+            if (!empty($item->taxes)) {
+                $taxes = json_decode($item->taxes);
+                
+                if (is_array($taxes)) {
+                    foreach ($taxes as $tax) {
+                        $this->tax = ProposalItem::taxbyid($tax)->first();
 
-                if ($this->tax) {
-                    if (!isset($taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'])) {
+                        if ($this->tax) {
+                            if (!isset($taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'])) {
 
-                        if ($this->proposal->calculate_tax == 'after_discount' && $this->discount > 0) {
-                            $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = ($item->amount - ($item->amount / $this->proposal->sub_total) * $this->discount) * ($this->tax->rate_percent / 100);
+                                if ($this->proposal->calculate_tax == 'after_discount' && $this->discount > 0) {
+                                    $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = ($item->amount - ($item->amount / $this->proposal->sub_total) * $this->discount) * ($this->tax->rate_percent / 100);
 
-                        }
-                        else {
-                            $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $item->amount * ($this->tax->rate_percent / 100);
-                        }
+                                }
+                                else {
+                                    $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $item->amount * ($this->tax->rate_percent / 100);
+                                }
 
-                    }
-                    else {
-                        if ($this->proposal->calculate_tax == 'after_discount' && $this->discount > 0) {
-                            $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] + (($item->amount - ($item->amount / $this->proposal->sub_total) * $this->discount) * ($this->tax->rate_percent / 100));
+                            }
+                            else {
+                                if ($this->proposal->calculate_tax == 'after_discount' && $this->discount > 0) {
+                                    $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] + (($item->amount - ($item->amount / $this->proposal->sub_total) * $this->discount) * ($this->tax->rate_percent / 100));
 
-                        }
-                        else {
-                            $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] + ($item->amount * ($this->tax->rate_percent / 100));
+                                }
+                                else {
+                                    $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] + ($item->amount * ($this->tax->rate_percent / 100));
+                                }
+                            }
                         }
                     }
                 }
@@ -476,12 +496,18 @@ class ProposalController extends AccountBaseController
         $pdf->setOption('isHtml5ParserEnabled', true);
         $pdf->setOption('isRemoteEnabled', true);
 
-        // $pdf->loadView('proposals.pdf.' . $this->invoiceSetting->template, $this->data);
+        // Validate template file exists
+        $templateView = 'proposals.pdf.' . $this->invoiceSetting->template;
+        
+        if (!view()->exists($templateView)) {
+            throw new \Exception('Template view not found: ' . $templateView);
+        }
+
         $customCss = '<style>
                 * { text-transform: none !important; }
             </style>';
 
-        $pdf->loadHTML($customCss . view('proposals.pdf.' . $this->invoiceSetting->template, $this->data)->render());
+        $pdf->loadHTML($customCss . view($templateView, $this->data)->render());
 
         $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
 
