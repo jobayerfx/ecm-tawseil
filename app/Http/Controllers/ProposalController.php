@@ -576,7 +576,7 @@ class ProposalController extends AccountBaseController
             </style>';
 
         // $pdf->loadHTML($customCss . view($templateView, $this->data)->render());
-        $pdf->loadHTML('<h1>Test</h1>');
+        $pdf->loadHTML('Hello');
         
          // Set paper size and orientation
         //  $pdf->setPaper('a4', 'portrait');
