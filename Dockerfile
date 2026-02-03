@@ -33,14 +33,19 @@ RUN docker-php-ext-install \
     intl \
     xsl
 
+# Install wkhtmltopdf (official binary)
 RUN apt-get update && apt-get install -y \
-    wkhtmltopdf \
-    fonts-dejavu \
+    wget \
+    xfonts-75dpi \
+    xfonts-base \
+    fontconfig \
     libxrender1 \
+    libxext6 \
     libfontconfig1 \
-    libxext6
-
-RUN apt-get install -y fonts-noto fonts-noto-cjk fonts-noto-color-emoji
+    && wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb \
+    && dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb \
+    && apt-get -f install -y \
+    && rm wkhtmltox_0.12.6-1.buster_amd64.deb
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
