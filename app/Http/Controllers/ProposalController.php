@@ -470,12 +470,13 @@ class ProposalController extends AccountBaseController
             $customCss = '<style>
                 * { text-transform: none !important; }
             </style>';
-            dd($this->invoiceSetting->template);
 
             $html = $customCss . view('proposals.pdf.' . $this->invoiceSetting->template, $this->data)->render();
             $pdf->loadHTML($html);
         
             $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
+
+            var_dump($pdf);
         
             return [
                 'pdf' => $pdf,
