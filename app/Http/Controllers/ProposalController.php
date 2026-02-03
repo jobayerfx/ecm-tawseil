@@ -375,7 +375,23 @@ class ProposalController extends AccountBaseController
         abort_403(!($this->viewLeadProposalsPermission == 'all' || ($this->viewLeadProposalsPermission == 'added' && $this->proposal->added_by == user()->id)));
 
         try {
+            // Debug: Log proposal data
+            $userId = user() ? user()->id : null;
+            Log::info('Proposal download started', [
+                'proposal_id' => $id,
+                'company_id' => $this->proposal->company_id,
+                'user_id' => $userId,
+                'proposal_data' => $this->proposal->toArray()
+            ]);
+
             $pdfOption = $this->domPdfObjectForDownload($id);
+            
+            // Debug: Log PDF generation success
+            Log::info('PDF generation successful', [
+                'proposal_id' => $id,
+                'filename' => $pdfOption['fileName'] ?? 'unknown'
+            ]);
+
             $pdf = $pdfOption['pdf'];
             $filename = $pdfOption['fileName'];
 
@@ -395,18 +411,22 @@ class ProposalController extends AccountBaseController
 
             return response($pdf->output(), 200, $headers);
         } catch (\Exception $e) {
-            // Log the error for debugging
+            // Log the error for debugging with full stack trace
+            $userId = user() ? user()->id : null;
             Log::error('Proposal PDF download failed: ' . $e->getMessage(), [
                 'proposal_id' => $id,
-                'user_id' => user()->id ?? null,
-                'exception' => $e
+                'user_id' => $userId,
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
             ]);
 
             // Return a user-friendly error response
             return response()->json([
                 'error' => true,
                 'message' => 'Failed to generate PDF. Please try again or contact support.',
-                'details' => $e->getMessage()
+                'details' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
             ], 500);
         }
     }
