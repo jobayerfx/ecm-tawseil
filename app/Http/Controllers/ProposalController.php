@@ -25,7 +25,6 @@ use App\Http\Requests\Proposal\StoreRequest;
 use App\Models\Lead;
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\Log;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProposalController extends AccountBaseController
 {
@@ -514,32 +513,32 @@ class ProposalController extends AccountBaseController
 
         // $pdf = app('dompdf.wrapper');
 
-        // $pdf = new Dompdf([
-        //     'defaultFont' => 'DejaVu Sans',
-        //     'isHtml5ParserEnabled' => true,
-        //     'isRemoteEnabled' => true,
-        //     'tempDir' => storage_path('app/dompdf'),
-        //     'logOutputFile' => storage_path('logs/dompdf.log'),
-        //     'fontCache' => storage_path('fonts'),
-        //     'chroot' => base_path(),
-        //     'allowedProtocols' => [
-        //         'file://' => ['rules' => []],
-        //         'http://' => ['rules' => []],
-        //         'https://' => ['rules' => []]
-        //     ],
-        //     'enableFontSubsetting' => false,
-        //     'pdfBackend' => 'CPDF',
-        //     'dpi' => 100,
-        //     'defaultMediaType' => 'screen',
-        //     'defaultPaperSize' => 'a4',
-        //     'defaultPaperOrientation' => 'portrait',
-        //     'enablePhp' => false,
-        //     'enableJavascript' => true,
-        //     'enableRemote' => true,
-        //     'fontHeightRatio' => 1.0,
-        //     'enableHtml5Parser' => true,
-        //     'isFontSubsettingEnabled' => true,
-        // ]);
+        $pdf = new Dompdf([
+            'defaultFont' => 'DejaVu Sans',
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'tempDir' => storage_path('app/dompdf'),
+            'logOutputFile' => storage_path('logs/dompdf.log'),
+            'fontCache' => storage_path('fonts'),
+            'chroot' => base_path(),
+            'allowedProtocols' => [
+                'file://' => ['rules' => []],
+                'http://' => ['rules' => []],
+                'https://' => ['rules' => []]
+            ],
+            'enableFontSubsetting' => false,
+            'pdfBackend' => 'CPDF',
+            'dpi' => 100,
+            'defaultMediaType' => 'screen',
+            'defaultPaperSize' => 'a4',
+            'defaultPaperOrientation' => 'portrait',
+            'enablePhp' => false,
+            'enableJavascript' => true,
+            'enableRemote' => true,
+            'fontHeightRatio' => 1.0,
+            'enableHtml5Parser' => true,
+            'isFontSubsettingEnabled' => true,
+        ]);
 
         // $pdf->setOption('enable_php', true);
         // $pdf->setOption('isHtml5ParserEnabled', true);
@@ -556,7 +555,7 @@ class ProposalController extends AccountBaseController
 
         $customCss = '<style>
                 @page { margin: 50px; }
-                body { ``
+                body { 
                     font-family: DejaVu Sans, Arial, sans-serif !important; 
                     font-size: 18px;
                     line-height: 1.2;
@@ -576,17 +575,16 @@ class ProposalController extends AccountBaseController
                 .word-break { word-wrap: break-word; word-break: break-all; }
             </style>';
 
-        // $pdf->set_option('defaultFont', 'Amiri');
-
-        $pdf = Pdf::loadView($templateView, $this->data);
+        $pdf->set_option('defaultFont', 'Amiri');
 
         // $pdf->loadHTML($customCss . view($templateView, $this->data)->render());
+        $pdf->loadHTML('<h1>Test</h1>');
         
          // Set paper size and orientation
-        //  $pdf->setPaper('a4', 'portrait');
+         $pdf->setPaper('a4', 'portrait');
  
          // Render the PDF
-        //  $pdf->render();
+         $pdf->render();
 
         $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
 
