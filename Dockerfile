@@ -33,6 +33,15 @@ RUN docker-php-ext-install \
     intl \
     xsl
 
+RUN apt-get update && apt-get install -y \
+    wkhtmltopdf \
+    fonts-dejavu \
+    libxrender1 \
+    libfontconfig1 \
+    libxext6
+
+RUN apt-get install -y fonts-noto fonts-noto-cjk fonts-noto-color-emoji
+
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 

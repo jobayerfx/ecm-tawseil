@@ -25,6 +25,7 @@ use App\Http\Requests\Proposal\StoreRequest;
 use App\Models\Lead;
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 
 class ProposalController extends AccountBaseController
 {
@@ -513,32 +514,32 @@ class ProposalController extends AccountBaseController
 
         // $pdf = app('dompdf.wrapper');
 
-        $pdf = new Dompdf([
-            'defaultFont' => 'DejaVu Sans',
-            'isHtml5ParserEnabled' => true,
-            'isRemoteEnabled' => true,
-            'tempDir' => storage_path('app/dompdf'),
-            'logOutputFile' => storage_path('logs/dompdf.log'),
-            'fontCache' => storage_path('fonts'),
-            'chroot' => base_path(),
-            'allowedProtocols' => [
-                'file://' => ['rules' => []],
-                'http://' => ['rules' => []],
-                'https://' => ['rules' => []]
-            ],
-            'enableFontSubsetting' => false,
-            'pdfBackend' => 'CPDF',
-            'dpi' => 100,
-            'defaultMediaType' => 'screen',
-            'defaultPaperSize' => 'a4',
-            'defaultPaperOrientation' => 'portrait',
-            'enablePhp' => false,
-            'enableJavascript' => true,
-            'enableRemote' => true,
-            'fontHeightRatio' => 1.0,
-            'enableHtml5Parser' => true,
-            'isFontSubsettingEnabled' => true,
-        ]);
+        // $pdf = new Dompdf([
+        //     'defaultFont' => 'DejaVu Sans',
+        //     'isHtml5ParserEnabled' => true,
+        //     'isRemoteEnabled' => true,
+        //     'tempDir' => storage_path('app/dompdf'),
+        //     'logOutputFile' => storage_path('logs/dompdf.log'),
+        //     'fontCache' => storage_path('fonts'),
+        //     'chroot' => base_path(),
+        //     'allowedProtocols' => [
+        //         'file://' => ['rules' => []],
+        //         'http://' => ['rules' => []],
+        //         'https://' => ['rules' => []]
+        //     ],
+        //     'enableFontSubsetting' => false,
+        //     'pdfBackend' => 'CPDF',
+        //     'dpi' => 100,
+        //     'defaultMediaType' => 'screen',
+        //     'defaultPaperSize' => 'a4',
+        //     'defaultPaperOrientation' => 'portrait',
+        //     'enablePhp' => false,
+        //     'enableJavascript' => true,
+        //     'enableRemote' => true,
+        //     'fontHeightRatio' => 1.0,
+        //     'enableHtml5Parser' => true,
+        //     'isFontSubsettingEnabled' => true,
+        // ]);
 
         // $pdf->setOption('enable_php', true);
         // $pdf->setOption('isHtml5ParserEnabled', true);
@@ -576,16 +577,17 @@ class ProposalController extends AccountBaseController
             </style>';
 
         // $pdf->loadHTML($customCss . view($templateView, $this->data)->render());
-        $pdf->loadHTML('Hello');
+        $pdf = SnappyPdf::loadView($templateView, $this->data);
+        // return $pdf->download('invoice.pdf');
         
          // Set paper size and orientation
         //  $pdf->setPaper('a4', 'portrait');
  
          // Render the PDF
-         $pdf->render();
+        //  $pdf->render();
 
         // Output the generated PDF to Browser
-        return $pdf->stream();
+        // return $pdf->stream();
 
         $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
 
