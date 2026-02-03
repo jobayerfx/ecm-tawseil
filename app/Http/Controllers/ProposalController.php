@@ -575,16 +575,14 @@ class ProposalController extends AccountBaseController
                 .word-break { word-wrap: break-word; word-break: break-all; }
             </style>';
 
-        $pdf->set_option('defaultFont', 'Amiri');
-
         // $pdf->loadHTML($customCss . view($templateView, $this->data)->render());
         $pdf->loadHTML('<h1>Test</h1>');
         
          // Set paper size and orientation
-         $pdf->setPaper('a4', 'portrait');
+        //  $pdf->setPaper('a4', 'portrait');
  
          // Render the PDF
-         $pdf->render();
+        //  $pdf->render();
 
         $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
 
