@@ -23,6 +23,7 @@ use App\Models\InvoiceSetting;
 use App\DataTables\ProposalDataTable;
 use App\Http\Requests\Proposal\StoreRequest;
 use App\Models\Lead;
+use Dompdf\Dompdf;
 use Illuminate\Support\Facades\Log;
 
 class ProposalController extends AccountBaseController
@@ -510,13 +511,20 @@ class ProposalController extends AccountBaseController
 
         $this->company = $this->proposal->company;
 
-        $pdf = app('dompdf.wrapper');
+        // $pdf = app('dompdf.wrapper');
 
-        $pdf->setOption('enable_php', true);
-        $pdf->setOption('isHtml5ParserEnabled', true);
-        $pdf->setOption('isRemoteEnabled', true);
-        $pdf->set_option('defaultFont', 'DejaVu Sans');
-        $pdf->setOption('tempDir', '/tmp/dompdf');
+        $pdf = new Dompdf([
+            'defaultFont' => 'DejaVu Sans',
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'tempDir' => '/tmp/dompdf',
+        ]);
+
+        // $pdf->setOption('enable_php', true);
+        // $pdf->setOption('isHtml5ParserEnabled', true);
+        // $pdf->setOption('isRemoteEnabled', true);
+        // $pdf->set_option('defaultFont', 'DejaVu Sans');
+        // $pdf->setOption('tempDir', '/tmp/dompdf');
 
         // Validate template file exists
         $templateView = 'proposals.pdf.' . $this->invoiceSetting->template;
