@@ -573,6 +573,12 @@ class ProposalController extends AccountBaseController
             </style>';
 
         $pdf->loadHTML($customCss . view($templateView, $this->data)->render());
+        
+         // Set paper size and orientation
+         $pdf->setPaper('a4', 'portrait');
+ 
+         // Render the PDF
+         $pdf->render();
 
         $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
 
