@@ -582,7 +582,10 @@ class ProposalController extends AccountBaseController
         //  $pdf->setPaper('a4', 'portrait');
  
          // Render the PDF
-        //  $pdf->render();
+         $pdf->render();
+
+        // Output the generated PDF to Browser
+        return $pdf->stream();
 
         $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
 
