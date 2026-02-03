@@ -369,6 +369,7 @@ class ProposalController extends AccountBaseController
 
     public function download($id)
     {
+        dd('download', $id);
         $this->proposal = Proposal::with('unit')->findOrFail($id);
         $this->viewLeadProposalsPermission = user()->permission('view_lead_proposals');
         abort_403(!($this->viewLeadProposalsPermission == 'all' || ($this->viewLeadProposalsPermission == 'added' && $this->proposal->added_by == user()->id)));
