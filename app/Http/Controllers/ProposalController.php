@@ -439,8 +439,6 @@ class ProposalController extends AccountBaseController
 
         $this->company = $this->proposal->company;
 
-        dd( $this->data );
-
         // $pdf = app('dompdf.wrapper');
 
         // $pdf->setOption('enable_php', true);
