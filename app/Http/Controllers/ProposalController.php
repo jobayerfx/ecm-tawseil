@@ -379,10 +379,10 @@ class ProposalController extends AccountBaseController
 
         $pdf->setOption('tempDir', '/tmp/dompdf');
 
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->output();
-        }, $filename . '.pdf');
-        // return $pdf->download($filename . '.pdf');
+        // return response()->streamDownload(function () use ($pdf) {
+        //     echo $pdf->output();
+        // }, $filename . '.pdf');
+        return $pdf->download($filename . '.pdf');
     }
 
     public function domPdfObjectForDownload($id)
