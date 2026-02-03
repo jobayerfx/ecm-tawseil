@@ -472,7 +472,7 @@ class ProposalController extends AccountBaseController
             $customCss = '<style>
                 * { text-transform: none !important; }
             </style>';
-
+            dd($this->invoiceSetting->template);
 
             $html = $customCss . view('proposals.pdf.' . $this->invoiceSetting->template, $this->data)->render();
             $pdf->loadHTML($html);
@@ -485,7 +485,7 @@ class ProposalController extends AccountBaseController
             ];
         } catch (\Throwable $e) {
             \Log::error('PDF generation failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            abort(500, 'PDF generation failed.');
+            abort(401, 'PDF generation failed.');
         }
     }
 
