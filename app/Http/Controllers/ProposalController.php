@@ -23,6 +23,7 @@ use App\Models\InvoiceSetting;
 use App\DataTables\ProposalDataTable;
 use App\Http\Requests\Proposal\StoreRequest;
 use App\Models\Lead;
+use Illuminate\Support\Facades\Log;
 
 class ProposalController extends AccountBaseController
 {
@@ -373,16 +374,41 @@ class ProposalController extends AccountBaseController
         $this->viewLeadProposalsPermission = user()->permission('view_lead_proposals');
         abort_403(!($this->viewLeadProposalsPermission == 'all' || ($this->viewLeadProposalsPermission == 'added' && $this->proposal->added_by == user()->id)));
 
-        $pdfOption = $this->domPdfObjectForDownload($id);
-        $pdf = $pdfOption['pdf'];
-        $filename = $pdfOption['fileName'];
+        try {
+            $pdfOption = $this->domPdfObjectForDownload($id);
+            $pdf = $pdfOption['pdf'];
+            $filename = $pdfOption['fileName'];
 
-        $pdf->setOption('tempDir', '/tmp/dompdf');
+            // Clear any existing output buffer
+            if (ob_get_level()) {
+                ob_end_clean();
+            }
 
-        // return response()->streamDownload(function () use ($pdf) {
-        //     echo $pdf->output();
-        // }, $filename . '.pdf');
-        return $pdf->download($filename . '.pdf');
+            // Set headers manually for better control
+            $headers = [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '.pdf"',
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'Pragma' => 'no-cache',
+                'Expires' => '0',
+            ];
+
+            return response($pdf->output(), 200, $headers);
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('Proposal PDF download failed: ' . $e->getMessage(), [
+                'proposal_id' => $id,
+                'user_id' => user()->id ?? null,
+                'exception' => $e
+            ]);
+
+            // Return a user-friendly error response
+            return response()->json([
+                'error' => true,
+                'message' => 'Failed to generate PDF. Please try again or contact support.',
+                'details' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function domPdfObjectForDownload($id)
