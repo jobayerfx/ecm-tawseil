@@ -25,6 +25,7 @@ use App\Http\Requests\Proposal\StoreRequest;
 use App\Models\Lead;
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProposalController extends AccountBaseController
 {
@@ -555,7 +556,7 @@ class ProposalController extends AccountBaseController
 
         $customCss = '<style>
                 @page { margin: 50px; }
-                body { 
+                body { ``
                     font-family: DejaVu Sans, Arial, sans-serif !important; 
                     font-size: 18px;
                     line-height: 1.2;
@@ -574,6 +575,8 @@ class ProposalController extends AccountBaseController
                 .description { font-family: DejaVu Sans, Arial, sans-serif !important; }
                 .word-break { word-wrap: break-word; word-break: break-all; }
             </style>';
+
+        $pdf->set_option('defaultFont', 'Amiri');
 
         $pdf->loadHTML($customCss . view($templateView, $this->data)->render());
         

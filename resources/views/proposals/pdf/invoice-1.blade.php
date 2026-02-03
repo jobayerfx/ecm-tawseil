@@ -3,6 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>@lang('app.proposal')</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     @includeIf('invoices.pdf.invoice_pdf_css')
     <style>
         body {
