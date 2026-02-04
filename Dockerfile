@@ -36,37 +36,6 @@ RUN docker-php-ext-install \
     intl \
     xsl
 
-# Chrome / Puppeteer deps
-RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg \
-    ca-certificates \
-    fonts-liberation \
-    libnspr4 \
-    libnss3 \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libx11-xcb1 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxrandr2 \
-    libgbm1 \
-    libasound2 \
-    libgtk-3-0 \
-    libdrm2 \
-    libxshmfence1 \
-    xdg-utils \
-    --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Google Chrome
-RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /usr/share/keyrings/google-linux-keyring.gpg \
- && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" \
-    > /etc/apt/sources.list.d/google-chrome.list \
- && apt-get update \
- && apt-get install -y google-chrome-stable \
- && rm -rf /var/lib/apt/lists/*
-
 # Copy wkhtmltopdf binary from the dedicated image
 COPY --from=wkhtml /bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
 

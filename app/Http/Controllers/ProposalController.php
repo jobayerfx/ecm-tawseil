@@ -25,8 +25,7 @@ use App\Http\Requests\Proposal\StoreRequest;
 use App\Models\Lead;
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\Log;
-use Spatie\Browsershot\Browsershot;
-use Spatie\LaravelPdf\Facades\Pdf;
+use Mpdf\Mpdf;
 
 class ProposalController extends AccountBaseController
 {
@@ -392,22 +391,15 @@ class ProposalController extends AccountBaseController
             //         ->format('A4')
             //     ->download('hello-world.pdf');
 
-            $file = storage_path('app/hello-world.pdf');
+            // $file = storage_path('app/hello-world.pdf');
 
-            Browsershot::html('<h1>Hello World!</h1>')
-                ->setChromePath('/usr/bin/google-chrome')
-                ->setOption('args', ['--no-sandbox', '--disable-setuid-sandbox'])
-                ->setOption('args', [
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--user-data-dir=/var/www/chrome'
-                ])
-                ->setOption('env', [
-                    'HOME' => '/home/www-data',
-                ])
-                ->savePdf($file);
+            $mpdf = new Mpdf();
+            $mpdf->WriteHTML('<h1>Hello World</h1>');
+            return response($mpdf->Output('hello.pdf', 'S'))
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename=hello.pdf');
 
-            return response()->download($file)->deleteFileAfterSend();
+            // return response()->download($file)->deleteFileAfterSend();
 
             
             // Alternative: Use the template-based approach
@@ -456,16 +448,6 @@ class ProposalController extends AccountBaseController
                 'file' => $e->getFile()
             ], 500);
         }
-    }
-
-    public function generatePdf()
-    {
-        // Generate PDF from HTML string and return as download
-        return Pdf::html('<h1>Hello World!</h1>')
-            // ->setChromePath('/usr/bin/google-chrome')
-            // ->noSandbox()
-            ->format('A4')
-            ->download('hello-world.pdf');
     }
 
     public function domPdfObjectForDownload($id)
