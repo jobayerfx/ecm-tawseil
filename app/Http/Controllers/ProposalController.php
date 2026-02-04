@@ -607,18 +607,26 @@ class ProposalController extends AccountBaseController
 
         $html = view($templateView, $this->data)->render();
 
-        // file_put_contents('/tmp/debug.html', $html);
+        $common_css_file = resource_path('views/proposals/pdf/css/common-pdf.css'); // fix typo
+        $main_css_file = resource_path('views/proposals/pdf/css/' . $this->invoiceSetting->template . '.css');
 
-        $common_css = file_get_contents(resource_path('views/proposals/pdf/css/commmon-pdf.css'));
-        $main_css = file_get_contents(resource_path('views/proposals/pdf/css/' . $this->invoiceSetting->template . '.css'));
+        if (file_exists($common_css_file)) {
+            $common_css = file_get_contents($common_css_file);
+        } else {
+            $common_css = '';
+        }
 
+        if (file_exists($main_css_file)) {
+            $main_css = file_get_contents($main_css_file);
+        } else {
+            $main_css = '';
+        }
 
-        // $html = view($templateView, $this->data)->render();
-        // echo $this->invoiceSetting->template;
-        // return $html;
+        $tempDir = storage_path('app/mpdf-temp'); 
+        if (!file_exists($tempDir)) mkdir($tempDir, 0755, true);        
 
         $mpdf = new Mpdf([
-            'tempDir' => '/tmp/mpdf',
+            'tempDir' => $tempDir,
             'mode' => 'utf-8',
             'format' => 'A4',
             'default_font' => 'dejavusans',
@@ -627,9 +635,7 @@ class ProposalController extends AccountBaseController
         ]);
         
         $mpdf->WriteHTML($common_css . $main_css, \Mpdf\HTMLParserMode::HEADER_CSS);
-        // $mpdf->WriteHTML($main_css, \Mpdf\HTMLParserMode::HEADER_CSS);
         $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
-        // $mpdf->WriteHTML('<h1>Hello World</h1>');
 
         $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
 
