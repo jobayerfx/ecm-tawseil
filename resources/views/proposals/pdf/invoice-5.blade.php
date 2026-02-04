@@ -298,11 +298,11 @@
         <!-- Table Row End -->
         </tbody>
     </table>
-    <p>
+    {{-- <p> --}}
     <div style="margin-top: 10px;" class="f-11 line-height text-grey">
         <b>@lang('modules.invoiceSettings.invoiceTerms')</b><br>{!! nl2br($invoiceSetting->invoice_terms) !!}
     </div>
-    </p>
+    {{-- </p> --}}
     @if (isset($invoiceSetting->other_info))
         <p>
         <div style="margin-top: 10px;" class="f-11 line-height text-grey">
