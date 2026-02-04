@@ -36,15 +36,19 @@ RUN docker-php-ext-install \
     intl \
     xsl
 
-RUN apt-get update && apt-get install -y \
+    RUN apt-get update && apt-get install -y \
     fontconfig \
     fonts-dejavu \
     fonts-liberation \
+    fonts-noto \
     libfreetype6 \
-    libpng-dev \
     libjpeg62-turbo-dev \
+    libpng-dev \
     libicu-dev \
-    && docker-php-ext-install intl
+    ghostscript \
+    imagemagick \
+    && docker-php-ext-install intl gd
+
 
 # Copy wkhtmltopdf binary from the dedicated image
 COPY --from=wkhtml /bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
