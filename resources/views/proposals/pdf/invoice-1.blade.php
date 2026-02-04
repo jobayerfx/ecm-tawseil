@@ -44,7 +44,9 @@
             <td>
                 <div id="company" class="description">
                     <div id="logo">
-                        <img src="{{ $invoiceSetting->logo_url }}" alt="home" class="dark-logo"/>
+                        @if($invoiceSetting->logo_url)
+                            <img src="{{ $invoiceSetting->logo_url }}" alt="home" class="dark-logo"/>
+                        @endif
                     </div>
                     <small>@lang("modules.invoices.generatedBy"):</small>
                     <div id="description" class="description">
@@ -107,15 +109,15 @@
                         <td class="desc">
                             <h3 class="description word-break">{{ $item->item_name }}</h3>
                             @if (!is_null($item->item_summary))
-                                <table>
+                                {{-- <table>
                                     <tbody>
-                                        <tr>
-                                            <td class="item-summary word-break border-top-0 border-right-0 border-left-0 border-bottom-0 description">{!! nl2br(pdfStripTags($item->item_summary)) !!}</td>
-                                        </tr>
+                                        <tr> --}}
+                                            <div class="item-summary word-break border-top-0 border-right-0 border-left-0 border-bottom-0 description">{!! nl2br(pdfStripTags($item->item_summary)) !!}</div>
+                                        {{-- </tr>
                                     </tbody>
-                                </table>
+                                </table> --}}
                             @endif
-                            @if ($item->proposalItemImage)
+                            @if($item->proposalItemImage && $item->proposalItemImage->file_url)
                                 <p class="mt-2">
                                     <img src="{{ $item->proposalItemImage->file_url }}" alt="item-image" width="60" height="60"
                                          class="img-thumbnail"/>
