@@ -25,7 +25,7 @@ use App\Http\Requests\Proposal\StoreRequest;
 use App\Models\Lead;
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\Log;
-use Barryvdh\Snappy\Facades\SnappyPdf;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class ProposalController extends AccountBaseController
 {
@@ -386,32 +386,37 @@ class ProposalController extends AccountBaseController
                 'proposal_data' => $this->proposal->toArray()
             ]);
 
-            $pdfOption = $this->domPdfObjectForDownload($id);
+            // Generate PDF from HTML string and return as download
+            return Pdf::html('<h1>Hello World!</h1>')
+                ->download('hello-world.pdf');
+            
+            // Alternative: Use the template-based approach
+            // $pdfOption = $this->domPdfObjectForDownload($id);
             
             // Debug: Log PDF generation success
-            Log::info('PDF generation successful', [
-                'proposal_id' => $id,
-                'filename' => $pdfOption['fileName'] ?? 'unknown'
-            ]);
+            // Log::info('PDF generation successful', [
+            //     'proposal_id' => $id,
+            //     'filename' => $pdfOption['fileName'] ?? 'unknown'
+            // ]);
 
-            $pdf = $pdfOption['pdf'];
-            $filename = $pdfOption['fileName'];
+            // $pdf = $pdfOption['pdf'];
+            // $filename = $pdfOption['fileName'];
 
-            // Clear any existing output buffer
-            if (ob_get_level()) {
-                ob_end_clean();
-            }
+            // // Clear any existing output buffer
+            // if (ob_get_level()) {
+            //     ob_end_clean();
+            // }
 
-            // Set headers manually for better control
-            $headers = [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="' . $filename . '.pdf"',
-                'Cache-Control' => 'no-cache, no-store, must-revalidate',
-                'Pragma' => 'no-cache',
-                'Expires' => '0',
-            ];
+            // // Set headers manually for better control
+            // $headers = [
+            //     'Content-Type' => 'application/pdf',
+            //     'Content-Disposition' => 'attachment; filename="' . $filename . '.pdf"',
+            //     'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            //     'Pragma' => 'no-cache',
+            //     'Expires' => '0',
+            // ];
 
-            return response($pdf->output(), 200, $headers);
+            // return response($pdf->output(), 200, $headers);
         } catch (\Exception $e) {
             // Log the error for debugging with full stack trace
             $userId = user() ? user()->id : null;
@@ -431,6 +436,13 @@ class ProposalController extends AccountBaseController
                 'file' => $e->getFile()
             ], 500);
         }
+    }
+
+    public function generatePdf()
+    {
+        // Generate PDF from HTML string and return as download
+        return Pdf::html('<h1>Hello World!</h1>')
+            ->download('hello-world.pdf');
     }
 
     public function domPdfObjectForDownload($id)
@@ -577,7 +589,10 @@ class ProposalController extends AccountBaseController
             </style>';
 
         // $pdf->loadHTML($customCss . view($templateView, $this->data)->render());
-        $pdf = SnappyPdf::loadView($templateView, $this->data);
+   
+        $pdf = Pdf::view($templateView, ['data' => $this->data]);
+        return $pdf->download('invoice.pdf');
+
         // return $pdf->download('invoice.pdf');
         
          // Set paper size and orientation
@@ -589,12 +604,12 @@ class ProposalController extends AccountBaseController
         // Output the generated PDF to Browser
         // return $pdf->stream();
 
-        $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
+        // $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
 
-        return [
-            'pdf' => $pdf,
-            'fileName' => $filename
-        ];
+        // return [
+        //     'pdf' => $pdf,
+        //     'fileName' => $filename
+        // ];
 
     }
 
