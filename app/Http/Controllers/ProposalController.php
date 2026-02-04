@@ -621,7 +621,9 @@ class ProposalController extends AccountBaseController
             'tempDir' => '/tmp/mpdf',
             'mode' => 'utf-8',
             'format' => 'A4',
-            'default_font' => 'dejavusans'
+            'default_font' => 'dejavusans',
+            'autoScriptToLang' => true,
+            'autoLangToFont' => true,
         ]);
         
         $mpdf->WriteHTML($common_css, \Mpdf\HTMLParserMode::HEADER_CSS);

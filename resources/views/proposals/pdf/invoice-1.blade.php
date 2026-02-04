@@ -23,19 +23,19 @@
                                 <div>{{ $proposal->deal->name }}</div>
                             @endif
                             @if ($proposal->lead->contact && $proposal->lead->contact->client_name && $invoiceSetting->show_client_name == 'yes')
-                                <b>{{ $proposal->lead->contact->client_name_salutation }}</b>
+                                <b>{{ $proposal->lead->contact->client_name_salutation ?? '' }}</b>
                             @endif
                             @if ($proposal->lead && $proposal->lead->contact->client_email && $invoiceSetting->show_client_email == 'yes')
-                                <div>{{ $proposal->lead->contact->client_email }}</div>
+                                <div>{{ $proposal->lead->contact->client_email ?? '' }}</div>
                             @endif
                             @if ($proposal->lead->contact && $proposal->lead->contact->mobile && $invoiceSetting->show_client_phone == 'yes')
-                                <div>{{ $proposal->lead->contact->mobile }}</div>
+                                <div>{{ $proposal->lead->contact->mobile ?? '' }}</div>
                             @endif
                             @if ($proposal->lead->contact && $proposal->lead->contact->company_name && $invoiceSetting->show_client_company_name == 'yes')
-                                <div>{{ $proposal->lead->contact->company_name }}</div>
+                                <div>{{ $proposal->lead->contact->company_name ?? '' }}</div>
                             @endif
                             @if ($proposal->lead->contact && $proposal->lead->contact->address && $invoiceSetting->show_client_company_address == 'yes')
-                                <div>{!! nl2br($proposal->lead->contact->address) !!}</div>
+                                <div>{!! nl2br($proposal->lead->contact->address ?? '') !!}</div>
                             @endif
                         </div>
                     </div>
@@ -108,9 +108,11 @@
                             <h3 class="description word-break">{{ $item->item_name }}</h3>
                             @if (!is_null($item->item_summary))
                                 <table>
-                                    <tr>
-                                        <td class="item-summary word-break border-top-0 border-right-0 border-left-0 border-bottom-0 description">{!! nl2br(pdfStripTags($item->item_summary)) !!}</td>
-                                    </tr>
+                                    <tbody>
+                                        <tr>
+                                            <td class="item-summary word-break border-top-0 border-right-0 border-left-0 border-bottom-0 description">{!! nl2br(pdfStripTags($item->item_summary)) !!}</td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                             @endif
                             @if ($item->proposalItemImage)
@@ -188,17 +190,17 @@
             @endforeach
             </tbody>
             <tfoot>
-            <tr dontbreak="true">
+            <tr style="page-break-inside: avoid;">
                 <td colspan="{{ $invoiceSetting->hsn_sac_code_show ? '6' : '5' }}">
                     @lang("modules.invoices.subTotal")</td>
                 <td style="text-align: center">{{ currency_format($proposal->sub_total, $proposal->currency_id, false) }}</td>
             </tr>
-            <tr dontbreak="true">
+            <tr style="page-break-inside: avoid;">
                 <td colspan="{{ $invoiceSetting->hsn_sac_code_show ? '6' : '5' }}">
                     @lang("modules.invoices.discount")</td>
                 <td style="text-align: center">{{ currency_format($discount, $proposal->currency_id, false) }}</td>
             </tr>
-            <tr dontbreak="true">
+            <tr style="page-break-inside: avoid;">
                 <td colspan="{{ $invoiceSetting->hsn_sac_code_show ? '6' : '5' }}">
                     @lang("modules.invoices.total")</td>
                 <td style="text-align: center">{{ currency_format($proposal->total, $proposal->currency_id, false) }}</td>
