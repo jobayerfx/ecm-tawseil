@@ -392,14 +392,16 @@ class ProposalController extends AccountBaseController
             //         ->format('A4')
             //     ->download('hello-world.pdf');
 
-            $file = storage_path('app/hello-world.pdf');
-
-            Browsershot::html('<h1>Hello World!</h1>')
-                ->setChromePath('/usr/bin/google-chrome')
-                ->setOption('args', ['--no-sandbox', '--disable-setuid-sandbox'])
-                ->savePdf($file);
-
-            return response()->download($file)->deleteFileAfterSend();
+            return response()->streamDownload(function () {
+                echo Browsershot::html('<h1>Hello World!</h1>')
+                    ->setChromePath('/usr/bin/google-chrome')
+                    ->setOption('args', [
+                        '--no-sandbox',
+                        '--disable-setuid-sandbox',
+                        '--user-data-dir=/var/www/chrome'
+                    ])
+                    ->pdf();
+            }, 'hello-world.pdf');
 
             
             // Alternative: Use the template-based approach
