@@ -100,114 +100,115 @@
                 </th>
             </tr>
             </thead>
+            <tfoot>
+                <tr style="page-break-inside: avoid;">
+                    <td colspan="{{ $invoiceSetting->hsn_sac_code_show ? '6' : '5' }}">
+                        @lang("modules.invoices.subTotal")</td>
+                    <td style="text-align: center">{{ currency_format($proposal->sub_total, $proposal->currency_id, false) }}</td>
+                </tr>
+                <tr style="page-break-inside: avoid;">
+                    <td colspan="{{ $invoiceSetting->hsn_sac_code_show ? '6' : '5' }}">
+                        @lang("modules.invoices.discount")</td>
+                    <td style="text-align: center">{{ currency_format($discount, $proposal->currency_id, false) }}</td>
+                </tr>
+                <tr style="page-break-inside: avoid;">
+                    <td colspan="{{ $invoiceSetting->hsn_sac_code_show ? '6' : '5' }}">
+                        @lang("modules.invoices.total")</td>
+                    <td style="text-align: center">{{ currency_format($proposal->total, $proposal->currency_id, false) }}</td>
+                </tr>
+            </tfoot>
             <tbody>
                 <?php $count = 0; ?>
-            @foreach ($proposal->items->sortBy('field_order') as $item)
-                @if ($item->type == 'item')
-                    <tr style="page-break-inside: avoid;">
-                        <td class="no">{{ ++$count }}</td>
-                        <td class="desc">
-                            <h3 class="description word-break">{{ $item->item_name }}</h3>
-                            @if (!is_null($item->item_summary))
-                                {{-- <table>
-                                    <tbody>
-                                        <tr> --}}
-                                            <div class="item-summary word-break border-top-0 border-right-0 border-left-0 border-bottom-0 description">{!! nl2br(pdfStripTags($item->item_summary)) !!}</div>
-                                        {{-- </tr>
-                                    </tbody>
-                                </table> --}}
-                            @endif
-                            @if($item->proposalItemImage && $item->proposalItemImage->file_url)
-                                <p class="mt-2">
-                                    <img src="{{ $item->proposalItemImage->file_url }}" alt="item-image" width="60" height="60"
-                                         class="img-thumbnail"/>
-                                </p>
-                            @endif
-                        </td>
-                        @if ($invoiceSetting->hsn_sac_code_show)
-                            <td class="qty">
-                                <h3>{{ $item->hsn_sac_code ?  : '--' }}</h3>
-                            </td>
-                        @endif
-                        <td class="qty">
-                            <h3>{{ $item->quantity }}
-                                @if($item->unit)<br>
-                                    <span class="f-11 text-dark-grey">{{ $item->unit->unit_type }}</span>
+                @foreach ($proposal->items->sortBy('field_order') as $item)
+                    @if ($item->type == 'item')
+                        <tr style="page-break-inside: avoid;">
+                            <td class="no">{{ ++$count }}</td>
+                            <td class="desc">
+                                <h3 class="description word-break">{{ $item->item_name }}</h3>
+                                @if (!is_null($item->item_summary))
+                                    {{-- <table>
+                                        <tbody>
+                                            <tr> --}}
+                                                <div class="item-summary word-break border-top-0 border-right-0 border-left-0 border-bottom-0 description">{!! nl2br(pdfStripTags($item->item_summary)) !!}</div>
+                                            {{-- </tr>
+                                        </tbody>
+                                    </table> --}}
                                 @endif
-                            </h3>
+                                @if($item->proposalItemImage && $item->proposalItemImage->file_url)
+                                    <p class="mt-2">
+                                        <img src="{{ $item->proposalItemImage->file_url }}" alt="item-image" width="60" height="60"
+                                            class="img-thumbnail"/>
+                                    </p>
+                                @endif
+                            </td>
+                            @if ($invoiceSetting->hsn_sac_code_show)
+                                <td class="qty">
+                                    <h3>{{ $item->hsn_sac_code ?  : '--' }}</h3>
+                                </td>
+                            @endif
+                            <td class="qty">
+                                <h3>{{ $item->quantity }}
+                                    @if($item->unit)<br>
+                                        <span class="f-11 text-dark-grey">{{ $item->unit->unit_type }}</span>
+                                    @endif
+                                </h3>
+                            </td>
+                            <td class="qty">
+                                <h3>{{ currency_format($item->unit_price, $proposal->currency_id, false) }}</h3>
+                            </td>
+                            <td>
+                                {{ $item->tax_list }}
+                            </td>
+                            <td class="unit">{{ currency_format($item->amount, $proposal->currency_id, false) }}</td>
+                        </tr>
+                    @endif
+                @endforeach
+                <tr style="page-break-inside: avoid;" class="subtotal">
+                    <td class="no">&nbsp;</td>
+                    <td class="qty">&nbsp;</td>
+                    <td class="qty">&nbsp;</td>
+                    @if ($invoiceSetting->hsn_sac_code_show)
+                        <td class="qty">&nbsp;</td>
+                    @endif
+                    <td class="qty">&nbsp;</td>
+                    <td class="desc">@lang("modules.invoices.subTotal")</td>
+                    <td class="unit">{{ currency_format($proposal->sub_total, $proposal->currency_id, false) }}</td>
+                </tr>
+
+                @if ($discount != 0 && $discount != '')
+                    <tr style="page-break-inside: avoid;" class="discount">
+                        <td class="no">&nbsp;</td>
+                        <td class="qty">&nbsp;</td>
+                        <td class="qty">&nbsp;</td>
+                        @if ($invoiceSetting->hsn_sac_code_show)
+                            <td class="qty">&nbsp;</td>
+                        @endif
+                        <td class="qty">&nbsp;</td>
+                        <td class="desc">@lang("modules.invoices.discount"):
+                            @if($proposal->discount_type == 'percent')
+                                {{$proposal->discount}}%
+                            @else
+                                {{ currency_format($proposal->discount, $proposal->currency_id) }}
+                            @endif
                         </td>
-                        <td class="qty">
-                            <h3>{{ currency_format($item->unit_price, $proposal->currency_id, false) }}</h3>
-                        </td>
-                        <td>
-                            {{ $item->tax_list }}
-                        </td>
-                        <td class="unit">{{ currency_format($item->amount, $proposal->currency_id, false) }}</td>
+                        <td class="unit">{{ currency_format($discount, $proposal->currency_id, false) }}</td>
                     </tr>
                 @endif
-            @endforeach
-            <tr style="page-break-inside: avoid;" class="subtotal">
-                <td class="no">&nbsp;</td>
-                <td class="qty">&nbsp;</td>
-                <td class="qty">&nbsp;</td>
-                @if ($invoiceSetting->hsn_sac_code_show)
-                    <td class="qty">&nbsp;</td>
-                @endif
-                <td class="qty">&nbsp;</td>
-                <td class="desc">@lang("modules.invoices.subTotal")</td>
-                <td class="unit">{{ currency_format($proposal->sub_total, $proposal->currency_id, false) }}</td>
-            </tr>
-
-            @if ($discount != 0 && $discount != '')
-                <tr style="page-break-inside: avoid;" class="discount">
-                    <td class="no">&nbsp;</td>
-                    <td class="qty">&nbsp;</td>
-                    <td class="qty">&nbsp;</td>
-                    @if ($invoiceSetting->hsn_sac_code_show)
+                @foreach ($taxes as $key => $tax)
+                    <tr style="page-break-inside: avoid;" class="tax">
+                        <td class="no">&nbsp;</td>
                         <td class="qty">&nbsp;</td>
-                    @endif
-                    <td class="qty">&nbsp;</td>
-                    <td class="desc">@lang("modules.invoices.discount"):
-                        @if($proposal->discount_type == 'percent')
-                            {{$proposal->discount}}%
-                        @else
-                            {{ currency_format($proposal->discount, $proposal->currency_id) }}
+                        <td class="qty">&nbsp;</td>
+                        @if ($invoiceSetting->hsn_sac_code_show)
+                            <td class="qty">&nbsp;</td>
                         @endif
-                    </td>
-                    <td class="unit">{{ currency_format($discount, $proposal->currency_id, false) }}</td>
-                </tr>
-            @endif
-            @foreach ($taxes as $key => $tax)
-                <tr style="page-break-inside: avoid;" class="tax">
-                    <td class="no">&nbsp;</td>
-                    <td class="qty">&nbsp;</td>
-                    <td class="qty">&nbsp;</td>
-                    @if ($invoiceSetting->hsn_sac_code_show)
                         <td class="qty">&nbsp;</td>
-                    @endif
-                    <td class="qty">&nbsp;</td>
-                    <td class="desc">{{ $key }}</td>
-                    <td class="unit">{{ currency_format($tax, $proposal->currency_id, false) }}</td>
-                </tr>
-            @endforeach
+                        <td class="desc">{{ $key }}</td>
+                        <td class="unit">{{ currency_format($tax, $proposal->currency_id, false) }}</td>
+                    </tr>
+                @endforeach
             </tbody>
-            <tfoot>
-            <tr style="page-break-inside: avoid;">
-                <td colspan="{{ $invoiceSetting->hsn_sac_code_show ? '6' : '5' }}">
-                    @lang("modules.invoices.subTotal")</td>
-                <td style="text-align: center">{{ currency_format($proposal->sub_total, $proposal->currency_id, false) }}</td>
-            </tr>
-            <tr style="page-break-inside: avoid;">
-                <td colspan="{{ $invoiceSetting->hsn_sac_code_show ? '6' : '5' }}">
-                    @lang("modules.invoices.discount")</td>
-                <td style="text-align: center">{{ currency_format($discount, $proposal->currency_id, false) }}</td>
-            </tr>
-            <tr style="page-break-inside: avoid;">
-                <td colspan="{{ $invoiceSetting->hsn_sac_code_show ? '6' : '5' }}">
-                    @lang("modules.invoices.total")</td>
-                <td style="text-align: center">{{ currency_format($proposal->total, $proposal->currency_id, false) }}</td>
-            </tr>
-            </tfoot>
+            
         </table>
 
 
