@@ -44,3 +44,5 @@ package-lock.json
 composer.lock
 /Modules/
 docker/
+composer.lock
+package-lock.json
