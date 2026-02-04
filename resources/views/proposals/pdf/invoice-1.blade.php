@@ -47,7 +47,7 @@
                         <img src="{{ $invoiceSetting->logo_url }}" alt="home" class="dark-logo"/>
                     </div>
                     <small>@lang("modules.invoices.generatedBy"):</small>
-                    <div id="logo" class="description">
+                    <div id="description" class="description">
                         <h3 class="name">{{ $company->company_name }}</h3>
                         @if (!is_null($company))
                             <div>{!! nl2br($company->defaultAddress->address) !!}</div>
@@ -126,8 +126,11 @@
                             </td>
                         @endif
                         <td class="qty">
-                            <h3>{{ $item->quantity }}@if($item->unit)<br><span
-                                    class="f-11 text-dark-grey">{{ $item->unit->unit_type }}</span>@endif</span></h3>
+                            <h3>{{ $item->quantity }}
+                                @if($item->unit)<br>
+                                    <span class="f-11 text-dark-grey">{{ $item->unit->unit_type }}</span>
+                                @endif
+                            </h3>
                         </td>
                         <td class="qty">
                             <h3>{{ currency_format($item->unit_price, $proposal->currency_id, false) }}</h3>
@@ -236,7 +239,7 @@
                 @else
                     <h6>@lang('modules.estimates.signedBy')</h6>
                 @endif
-                <p class="description">({{ $proposal->signature->full_name }})</p>
+                <span class="description">({{ $proposal->signature->full_name }})</span>
             </span>
         @endif
 
