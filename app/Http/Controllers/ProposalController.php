@@ -393,7 +393,9 @@ class ProposalController extends AccountBaseController
 
             // $file = storage_path('app/hello-world.pdf');
 
-            $mpdf = new Mpdf();
+            $mpdf = new Mpdf([
+                'tempDir' => '/tmp/mpdf'
+            ]);
             $mpdf->WriteHTML('<h1>Hello World</h1>');
             return response($mpdf->Output('hello.pdf', 'S'))
                 ->header('Content-Type', 'application/pdf')
