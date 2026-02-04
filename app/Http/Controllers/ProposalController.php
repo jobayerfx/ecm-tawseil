@@ -25,6 +25,7 @@ use App\Http\Requests\Proposal\StoreRequest;
 use App\Models\Lead;
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\Log;
+use Spatie\Browsershot\Browsershot;
 use Spatie\LaravelPdf\Facades\Pdf;
 
 class ProposalController extends AccountBaseController
@@ -387,8 +388,12 @@ class ProposalController extends AccountBaseController
             ]);
 
             // Generate PDF from HTML string and return as download
-            return Pdf::html('<h1>Hello World!</h1>')
-                    ->format('A4')
+            // return Pdf::html('<h1>Hello World!</h1>')
+            //         ->format('A4')
+            //     ->download('hello-world.pdf');
+
+            return Browsershot::html('<h1>Hello World!</h1>')
+                ->setChromePath('/usr/bin/google-chrome')
                 ->download('hello-world.pdf');
             
             // Alternative: Use the template-based approach
