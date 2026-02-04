@@ -633,11 +633,9 @@ class ProposalController extends AccountBaseController
             'autoScriptToLang' => true,
             'autoLangToFont' => true,
         ]);
-        
-        // $mpdf->WriteHTML($common_css . $main_css, \Mpdf\HTMLParserMode::HEADER_CSS);
-        // $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
-        $htmlWithCss = '<style>' . $common_css . $main_css . '</style>' . $html;
-        $mpdf->WriteHTML($htmlWithCss, \Mpdf\HTMLParserMode::HTML_BODY);
+        $mpdf->debug = true;
+        $mpdf->WriteHTML( $main_css . $common_css, \Mpdf\HTMLParserMode::HEADER_CSS);
+        $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
 
         $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
 
