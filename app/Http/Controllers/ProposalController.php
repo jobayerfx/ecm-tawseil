@@ -606,6 +606,8 @@ class ProposalController extends AccountBaseController
             </style>';
 
         $html = view($templateView, $this->data)->render();
+        
+        file_put_contents('/tmp/debug.html', $html);
 
         $common_css = file_get_contents(resource_path('views/proposals/pdf/commmon-pdf.css'));
         $main_css = file_get_contents(resource_path('views/proposals/pdf/css/' . $this->invoiceSetting->template . '.css'));
