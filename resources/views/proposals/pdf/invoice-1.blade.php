@@ -40,7 +40,7 @@
                 <div id="company">
                     <div id="logo">
                         @if($invoiceSetting->logo_url)
-                            <img src="{{ $invoiceSetting->logo_url }}" alt="Logo"/>
+                            <img src="{{ $invoiceSetting->logo_url }}" height="50" alt="Logo" style="margin-bottom: 15px;"/>
                         @endif
                     </div>
                     <small>@lang("modules.invoices.generatedBy"):</small>
