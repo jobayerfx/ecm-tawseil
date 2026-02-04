@@ -634,6 +634,7 @@ class ProposalController extends AccountBaseController
             'autoLangToFont' => true,
         ]);
         $mpdf->debug = true;
+        $mpdf->showImageErrors = true;
         $mpdf->WriteHTML( $main_css . $common_css, \Mpdf\HTMLParserMode::HEADER_CSS);
         $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
 

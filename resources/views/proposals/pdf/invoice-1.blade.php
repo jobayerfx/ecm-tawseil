@@ -86,37 +86,43 @@
     @if (count($proposal->items) > 0)
         <table cellspacing="0" cellpadding="0" id="invoice-table">
             <thead>
-            <tr>
-                <th class="no">#</th>
-                <th class="desc description">@lang("modules.invoices.item")</th>
-                @if ($invoiceSetting->hsn_sac_code_show)
-                    <th class="qty description">@lang("app.hsnSac")</th>
-                @endif
-                <th class="qty description">@lang('modules.invoices.qty')</th>
-                <th class="qty description">@lang("modules.invoices.unitPrice")</th>
-                <th class="qty description">@lang("modules.invoices.tax")</th>
-                <th class="unit description">@lang("modules.invoices.price")
-                    ({!! htmlentities($proposal->currency->currency_code) !!})
-                </th>
-            </tr>
+                <tr>
+                    <th class="no">#</th>
+                    <th class="desc description">@lang("modules.invoices.item")</th>
+                    @if ($invoiceSetting->hsn_sac_code_show)
+                        <th class="qty description">@lang("app.hsnSac")</th>
+                    @endif
+                    <th class="qty description">@lang('modules.invoices.qty')</th>
+                    <th class="qty description">@lang("modules.invoices.unitPrice")</th>
+                    <th class="qty description">@lang("modules.invoices.tax")</th>
+                    <th class="unit description">@lang("modules.invoices.price")
+                        ({!! htmlentities($proposal->currency->currency_code) !!})
+                    </th>
+                </tr>
             </thead>
+
+            {{-- TFOOT must come before TBODY for mPDF --}}
             <tfoot>
                 <tr style="page-break-inside: avoid;">
                     <td colspan="{{ $invoiceSetting->hsn_sac_code_show ? '6' : '5' }}">
-                        @lang("modules.invoices.subTotal")</td>
+                        @lang("modules.invoices.subTotal")
+                    </td>
                     <td style="text-align: center">{{ currency_format($proposal->sub_total, $proposal->currency_id, false) }}</td>
                 </tr>
                 <tr style="page-break-inside: avoid;">
                     <td colspan="{{ $invoiceSetting->hsn_sac_code_show ? '6' : '5' }}">
-                        @lang("modules.invoices.discount")</td>
+                        @lang("modules.invoices.discount")
+                    </td>
                     <td style="text-align: center">{{ currency_format($discount, $proposal->currency_id, false) }}</td>
                 </tr>
                 <tr style="page-break-inside: avoid;">
                     <td colspan="{{ $invoiceSetting->hsn_sac_code_show ? '6' : '5' }}">
-                        @lang("modules.invoices.total")</td>
+                        @lang("modules.invoices.total")
+                    </td>
                     <td style="text-align: center">{{ currency_format($proposal->total, $proposal->currency_id, false) }}</td>
                 </tr>
             </tfoot>
+
             <tbody>
                 <?php $count = 0; ?>
                 @foreach ($proposal->items->sortBy('field_order') as $item)
@@ -124,131 +130,37 @@
                         <tr style="page-break-inside: avoid;">
                             <td class="no">{{ ++$count }}</td>
                             <td class="desc">
-                                <h3 class="description word-break">{{ $item->item_name }}</h3>
+                                {{ $item->item_name }}
                                 @if (!is_null($item->item_summary))
-                                    {{-- <table>
-                                        <tbody>
-                                            <tr> --}}
-                                                <div class="item-summary word-break border-top-0 border-right-0 border-left-0 border-bottom-0 description">{!! nl2br(pdfStripTags($item->item_summary)) !!}</div>
-                                            {{-- </tr>
-                                        </tbody>
-                                    </table> --}}
+                                    <div class="item-summary word-break">
+                                        {!! nl2br(pdfStripTags($item->item_summary)) !!}
+                                    </div>
                                 @endif
                                 @if($item->proposalItemImage && $item->proposalItemImage->file_url)
-                                    <p class="mt-2">
-                                        <img src="{{ $item->proposalItemImage->file_url }}" alt="item-image" width="60" height="60"
-                                            class="img-thumbnail"/>
-                                    </p>
+                                    <img src="{{ $item->proposalItemImage->file_url }}" width="60" height="60" class="img-thumbnail"/>
                                 @endif
                             </td>
+
                             @if ($invoiceSetting->hsn_sac_code_show)
-                                <td class="qty">
-                                    <h3>{{ $item->hsn_sac_code ?  : '--' }}</h3>
-                                </td>
+                                <td class="qty">{{ $item->hsn_sac_code ?: '--' }}</td>
                             @endif
+
                             <td class="qty">
-                                <h3>{{ $item->quantity }}
-                                    @if($item->unit)<br>
-                                        <span class="f-11 text-dark-grey">{{ $item->unit->unit_type }}</span>
-                                    @endif
-                                </h3>
+                                {{ $item->quantity }}
+                                @if($item->unit)
+                                    <br><span class="f-11 text-dark-grey">{{ $item->unit->unit_type }}</span>
+                                @endif
                             </td>
-                            <td class="qty">
-                                <h3>{{ currency_format($item->unit_price, $proposal->currency_id, false) }}</h3>
-                            </td>
-                            <td>
-                                {{ $item->tax_list }}
-                            </td>
+                            <td class="qty">{{ currency_format($item->unit_price, $proposal->currency_id, false) }}</td>
+                            <td>{{ $item->tax_list }}</td>
                             <td class="unit">{{ currency_format($item->amount, $proposal->currency_id, false) }}</td>
                         </tr>
                     @endif
                 @endforeach
-                <tr style="page-break-inside: avoid;" class="subtotal">
-                    <td class="no">&nbsp;</td>
-                    <td class="qty">&nbsp;</td>
-                    <td class="qty">&nbsp;</td>
-                    @if ($invoiceSetting->hsn_sac_code_show)
-                        <td class="qty">&nbsp;</td>
-                    @endif
-                    <td class="qty">&nbsp;</td>
-                    <td class="desc">@lang("modules.invoices.subTotal")</td>
-                    <td class="unit">{{ currency_format($proposal->sub_total, $proposal->currency_id, false) }}</td>
-                </tr>
-
-                @if ($discount != 0 && $discount != '')
-                    <tr style="page-break-inside: avoid;" class="discount">
-                        <td class="no">&nbsp;</td>
-                        <td class="qty">&nbsp;</td>
-                        <td class="qty">&nbsp;</td>
-                        @if ($invoiceSetting->hsn_sac_code_show)
-                            <td class="qty">&nbsp;</td>
-                        @endif
-                        <td class="qty">&nbsp;</td>
-                        <td class="desc">@lang("modules.invoices.discount"):
-                            @if($proposal->discount_type == 'percent')
-                                {{$proposal->discount}}%
-                            @else
-                                {{ currency_format($proposal->discount, $proposal->currency_id) }}
-                            @endif
-                        </td>
-                        <td class="unit">{{ currency_format($discount, $proposal->currency_id, false) }}</td>
-                    </tr>
-                @endif
-                @foreach ($taxes as $key => $tax)
-                    <tr style="page-break-inside: avoid;" class="tax">
-                        <td class="no">&nbsp;</td>
-                        <td class="qty">&nbsp;</td>
-                        <td class="qty">&nbsp;</td>
-                        @if ($invoiceSetting->hsn_sac_code_show)
-                            <td class="qty">&nbsp;</td>
-                        @endif
-                        <td class="qty">&nbsp;</td>
-                        <td class="desc">{{ $key }}</td>
-                        <td class="unit">{{ currency_format($tax, $proposal->currency_id, false) }}</td>
-                    </tr>
-                @endforeach
             </tbody>
-            
         </table>
-
-
-        <p id="notes" class="word-break description">
-            @if (!is_null($proposal->note))
-                @lang('app.note') <br>{!! nl2br($proposal->note) !!}<br>
-            @endif
-            <br>@lang('modules.invoiceSettings.invoiceTerms') <br>{!! nl2br($invoiceSetting->invoice_terms) !!}
-        </p>
-
-        @if (isset($invoiceSetting->other_info))
-            <p id="notes" class="word-break description">
-                {!! nl2br($invoiceSetting->other_info) !!}
-            </p>
         @endif
 
-        @if (isset($taxes) && $invoiceSetting->tax_calculation_msg == 1)
-            <p class="text-dark-grey description">
-                @if ($proposal->calculate_tax == 'after_discount')
-                    @lang('messages.calculateTaxAfterDiscount')
-                @else
-                    @lang('messages.calculateTaxBeforeDiscount')
-                @endif
-            </p>
-        @endif
-
-        @if ($proposal->signature)
-            <br>
-            <span>
-                @if (!is_null($proposal->signature->signature))
-                    <img src="{{ $proposal->signature->signature }}" style="width: 200px;" alt="Signature">
-                    <h6 class="description">@lang('modules.estimates.signature')</h6>
-                @else
-                    <h6>@lang('modules.estimates.signedBy')</h6>
-                @endif
-                <span class="description">({{ $proposal->signature->full_name }})</span>
-            </span>
-        @endif
-
-    @endif
 </main>
 </body>
 
