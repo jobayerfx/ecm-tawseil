@@ -1,7 +1,3 @@
-# -------- wkhtmltopdf base --------
-FROM surnet/alpine-wkhtmltopdf:3.23.2-024b2b2-full AS wkhtml
-
-# -------- App Image --------
 FROM php:8.2-fpm
 
 WORKDIR /var/www/html
