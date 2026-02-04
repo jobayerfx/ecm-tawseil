@@ -392,9 +392,12 @@ class ProposalController extends AccountBaseController
             //         ->format('A4')
             //     ->download('hello-world.pdf');
 
-            return Browsershot::html('<h1>Hello World!</h1>')
-                ->setChromePath('/usr/bin/google-chrome')
-                ->download('hello-world.pdf');
+            return response()->streamDownload(function () {
+                echo Browsershot::html('<h1>Hello World!</h1>')
+                    ->setChromePath('/usr/bin/google-chrome')
+                    ->setOption('args', ['--no-sandbox', '--disable-setuid-sandbox'])
+                    ->pdf();
+            }, 'hello-world.pdf');
             
             // Alternative: Use the template-based approach
             // $pdfOption = $this->domPdfObjectForDownload($id);
