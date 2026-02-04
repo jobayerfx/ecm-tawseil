@@ -115,7 +115,7 @@
 @if (count($proposal->items) > 0)
     <table width="100%" class="f-14 b-collapse">
         <tr>
-            <td height="10" colspan="{{ $invoiceSetting->hsn_sac_code_show ? '6' : '5' }}"></td>
+            <td height="10" colspan="{{ ($invoiceSetting->hsn_sac_code_show ?? false) ? 6 : 5 }}"></td>
         </tr>
         <!-- Table Row Start -->
         <tr class="main-table-heading text-grey">
@@ -139,10 +139,12 @@
                     <td width="40%" class="description word-break">{{ $item->item_name }}</td>
                     @if ($invoiceSetting->hsn_sac_code_show)
                         <td align="right" class="border-bottom-0"
-                            width="10%">{{ $item->hsn_sac_code ?  : '--' }}</td>
+                            width="10%">{{ $item->hsn_sac_code ?: '--' }}</td>
                     @endif
-                    <td align="right" class="border-bottom-0" width="10%">{{ $item->quantity }}<br><span
-                            class="f-11 text-grey">{{ $item->unit->unit_type }}</td>
+                    <td align="right" class="border-bottom-0" width="10%">
+                        {{ $item->quantity }}<br>
+                        <span class="f-11 text-grey">{{ $item->unit->unit_type ?? '' }}</span>
+                    </td>
                     <td align="right"
                         class="border-bottom-0">{{ currency_format($item->unit_price, $proposal->currency_id, false) }}</td>
                     <td align="right" class="border-bottom-0">{{ $item->tax_list }}</td>
@@ -281,7 +283,7 @@
         <!-- Table Row End -->
         <!-- Table Row Start -->
         <tr class="text-grey">
-            <td colspan="2" class="f-14 line-height">
+            <td class="f-14 line-height">
                 @if ($proposal->signature)
                     @if (!is_null($proposal->signature->signature))
                         <img src="{{ $proposal->signature->signature }}" style="width: 200px;">
