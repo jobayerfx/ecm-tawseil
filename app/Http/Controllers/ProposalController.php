@@ -621,7 +621,7 @@ class ProposalController extends AccountBaseController
             'tempDir' => $tempDir,
             'mode' => 'utf-8',
             'format' => 'A4',
-            'default_font' => 'Arial',
+            'default_font' => 'dejavusans',
             'autoScriptToLang' => true,
             'autoLangToFont' => true,
         ]);
