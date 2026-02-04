@@ -388,9 +388,7 @@ class ProposalController extends AccountBaseController
 
             // Generate PDF from HTML string and return as download
             return Pdf::html('<h1>Hello World!</h1>')
-                ->chromeArguments(['--no-sandbox', '--disable-setuid-sandbox'])
-                ->setChromePath('/usr/bin/google-chrome')
-                ->format('A4')
+                    ->format('A4')
                 ->download('hello-world.pdf');
             
             // Alternative: Use the template-based approach
