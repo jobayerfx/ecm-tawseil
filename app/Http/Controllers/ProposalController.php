@@ -379,12 +379,14 @@ class ProposalController extends AccountBaseController
         try {
             // Debug: Log proposal data
             $userId = user() ? user()->id : null;
-            Log::info('Proposal download started', [
-                'proposal_id' => $id,
-                'company_id' => $this->proposal->company_id,
-                'user_id' => $userId,
-                'proposal_data' => $this->proposal->toArray()
-            ]);
+
+            return $this->domPdfObjectForDownload($id);
+            // Log::info('Proposal download started', [
+            //     'proposal_id' => $id,
+            //     'company_id' => $this->proposal->company_id,
+            //     'user_id' => $userId,
+            //     'proposal_data' => $this->proposal->toArray()
+            // ]);
 
             // Generate PDF from HTML string and return as download
             // return Pdf::html('<h1>Hello World!</h1>')
@@ -393,13 +395,13 @@ class ProposalController extends AccountBaseController
 
             // $file = storage_path('app/hello-world.pdf');
 
-            $mpdf = new Mpdf([
-                'tempDir' => '/tmp/mpdf'
-            ]);
-            $mpdf->WriteHTML('<h1>Hello World</h1>');
-            return response($mpdf->Output('hello.pdf', 'S'))
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename=hello.pdf');
+            // $mpdf = new Mpdf([
+            //     'tempDir' => '/tmp/mpdf'
+            // ]);
+            // $mpdf->WriteHTML('<h1>Hello World</h1>');
+            // return response($mpdf->Output('hello.pdf', 'S'))
+            //     ->header('Content-Type', 'application/pdf')
+            //     ->header('Content-Disposition', 'attachment; filename=hello.pdf');
 
             // return response()->download($file)->deleteFileAfterSend();
 
@@ -566,6 +568,14 @@ class ProposalController extends AccountBaseController
         // $pdf->set_option('defaultFont', 'DejaVu Sans');
         // $pdf->setOption('tempDir', '/tmp/dompdf');
 
+        // $mpdf = new Mpdf([
+        //         'tempDir' => '/tmp/mpdf'
+        // ]);
+        // $mpdf->WriteHTML('<h1>Hello World</h1>');
+        // return response($mpdf->Output('hello.pdf', 'S'))
+        //     ->header('Content-Type', 'application/pdf')
+        //     ->header('Content-Disposition', 'attachment; filename=hello.pdf');
+
         // Validate template file exists
         $templateView = 'proposals.pdf.' . $this->invoiceSetting->template;
         
@@ -595,10 +605,29 @@ class ProposalController extends AccountBaseController
                 .word-break { word-wrap: break-word; word-break: break-all; }
             </style>';
 
-        // $pdf->loadHTML($customCss . view($templateView, $this->data)->render());
-   
-        $pdf = Pdf::view($templateView, ['data' => $this->data]);
-        return $pdf->download('invoice.pdf');
+        $html = view($templateView, $this->data)->render();
+
+        $common_css = file_get_contents(resource_path('views/proposals/pdf/commmon-pdf.css'));
+        $main_css = file_get_contents(resource_path('views/proposals/pdf/css/' . $this->invoiceSetting->template . '.css'));
+
+        $mpdf = new Mpdf([
+            'tempDir' => '/tmp/mpdf',
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'default_font' => 'dejavusans'
+        ]);
+        
+        $mpdf->WriteHTML($common_css, \Mpdf\HTMLParserMode::HEADER_CSS);
+        $mpdf->WriteHTML($main_css, \Mpdf\HTMLParserMode::HEADER_CSS);
+        $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
+        // $mpdf->WriteHTML('<h1>Hello World</h1>');
+
+        $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
+
+        return response($mpdf->Output($filename . '.pdf', 'S'))
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename='.$filename.'.pdf');
+
 
         // return $pdf->download('invoice.pdf');
         
