@@ -444,6 +444,7 @@ class ProposalController extends AccountBaseController
         return Pdf::html('<h1>Hello World!</h1>')
             ->setChromePath('/usr/bin/google-chrome')
             ->noSandbox()
+            ->format('A4')
             ->download('hello-world.pdf');
     }
 
