@@ -115,7 +115,7 @@
                             @endif
                             @if ($item->proposalItemImage)
                                 <p class="mt-2">
-                                    <img src="{{ $item->proposalItemImage->file_url }}" width="60" height="60"
+                                    <img src="{{ $item->proposalItemImage->file_url }}" alt="item-image" width="60" height="60"
                                          class="img-thumbnail"/>
                                 </p>
                             @endif

@@ -613,9 +613,9 @@ class ProposalController extends AccountBaseController
         $main_css = file_get_contents(resource_path('views/proposals/pdf/css/' . $this->invoiceSetting->template . '.css'));
 
 
-        $html = view($templateView, $this->data)->render();
-        echo $this->invoiceSetting->template;
-        return $html;
+        // $html = view($templateView, $this->data)->render();
+        // echo $this->invoiceSetting->template;
+        // return $html;
 
         $mpdf = new Mpdf([
             'tempDir' => '/tmp/mpdf',
