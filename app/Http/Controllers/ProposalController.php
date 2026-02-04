@@ -635,6 +635,7 @@ class ProposalController extends AccountBaseController
         ]);
         $mpdf->debug = true;
         $mpdf->showImageErrors = true;
+        $mpdf->SetCompression(false);
         $mpdf->WriteHTML( $main_css . $common_css, \Mpdf\HTMLParserMode::HEADER_CSS);
         $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
 

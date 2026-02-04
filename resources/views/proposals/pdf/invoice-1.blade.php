@@ -1,23 +1,9 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <title>@lang('app.proposal')</title>
-    <style>
-        body { font-family: dejavusans, sans-serif; font-size: 12pt; line-height: 1.3; color: #000; }
-        h1, h3, h6 { margin: 0; padding: 0; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 5px; border: 1px solid #000; vertical-align: top; }
-        .no { width: 3%; text-align: center; }
-        .desc { width: 45%; }
-        .qty, .unit { text-align: center; }
-        #company #logo img { max-width: 120px; }
-        .word-break { word-wrap: break-word; }
-        .description { font-size: 10pt; }
-        #notes { margin-top: 20px; }
-        .subtotal, .discount, .tax { font-weight: bold; }
-        img.img-thumbnail { border: 1px solid #ddd; padding: 2px; }
-    </style>
-</head>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>@lang('app.proposal')</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    </head>
 <body>
 <header class="description clearfix">
     <table cellpadding="0" cellspacing="0" class="billing">
