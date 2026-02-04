@@ -621,7 +621,7 @@ class ProposalController extends AccountBaseController
             'tempDir' => $tempDir,
             'mode' => 'utf-8',
             'format' => 'A4',
-            'default_font' => 'dejavusans',
+            'default_font' => 'Arial',
             'autoScriptToLang' => true,
             'autoLangToFont' => true,
         ]);
@@ -630,8 +630,6 @@ class ProposalController extends AccountBaseController
         $mpdf->SetCompression(false);
         $mpdf->WriteHTML($commonCss . $mainCss, \Mpdf\HTMLParserMode::HEADER_CSS);
         $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
-
-        dd($mpdf->getFontFamilies());
 
         $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
 
