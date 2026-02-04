@@ -631,6 +631,8 @@ class ProposalController extends AccountBaseController
         $mpdf->WriteHTML($commonCss . $mainCss, \Mpdf\HTMLParserMode::HEADER_CSS);
         $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
 
+        dd($mpdf->getFontFamilies());
+
         $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
 
         return response($mpdf->Output($filename . '.pdf', 'S'))
