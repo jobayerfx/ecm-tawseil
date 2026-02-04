@@ -607,24 +607,16 @@ class ProposalController extends AccountBaseController
 
         $html = view($templateView, $this->data)->render();
 
-        $common_css_file = resource_path('views/proposals/pdf/css/common-pdf.css'); // fix typo
-        $main_css_file = resource_path('views/proposals/pdf/css/' . $this->invoiceSetting->template . '.css');
-
-        if (file_exists($common_css_file)) {
-            $common_css = file_get_contents($common_css_file);
-        } else {
-            $common_css = '';
-        }
-
-        if (file_exists($main_css_file)) {
-            $main_css = file_get_contents($main_css_file);
-        } else {
-            $main_css = '';
-        }
-
+        $commonCssPath = resource_path('views/proposals/pdf/css/common-pdf.css');
+        $mainCssPath   = resource_path('views/proposals/pdf/css/' . $this->invoiceSetting->template . '.css');
+        
+        $commonCss = file_exists($commonCssPath) ? file_get_contents($commonCssPath) : '';
+        $mainCss   = file_exists($mainCssPath) ? file_get_contents($mainCssPath) : '';
+        
+        
         $tempDir = storage_path('app/mpdf-temp'); 
         if (!file_exists($tempDir)) mkdir($tempDir, 0755, true);        
-
+        
         $mpdf = new Mpdf([
             'tempDir' => $tempDir,
             'mode' => 'utf-8',
@@ -636,7 +628,7 @@ class ProposalController extends AccountBaseController
         $mpdf->debug = true;
         $mpdf->showImageErrors = true;
         $mpdf->SetCompression(false);
-        $mpdf->WriteHTML( $main_css . $common_css, \Mpdf\HTMLParserMode::HEADER_CSS);
+        $mpdf->WriteHTML($commonCss . $mainCss, \Mpdf\HTMLParserMode::HEADER_CSS);
         $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
 
         $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
