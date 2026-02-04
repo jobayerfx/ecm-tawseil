@@ -304,11 +304,11 @@
     </div>
     {{-- </p> --}}
     @if (isset($invoiceSetting->other_info))
-        <p>
+        {{-- <p> --}}
         <div style="margin-top: 10px;" class="f-11 line-height text-grey">
             {!! nl2br($invoiceSetting->other_info) !!}
         </div>
-        </p>
+        {{-- </p> --}}
     @endif
 
 @endif
