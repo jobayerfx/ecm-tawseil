@@ -402,6 +402,9 @@ class ProposalController extends AccountBaseController
                     '--disable-setuid-sandbox',
                     '--user-data-dir=/var/www/chrome'
                 ])
+                ->setOption('env', [
+                    'HOME' => '/home/www-data',
+                ])
                 ->savePdf($file);
 
             return response()->download($file)->deleteFileAfterSend();
