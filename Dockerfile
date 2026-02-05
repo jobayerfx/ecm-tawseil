@@ -32,7 +32,7 @@ RUN docker-php-ext-install \
     intl \
     xsl
 
-    RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y \
     fontconfig \
     fonts-dejavu \
     fonts-liberation \
@@ -44,13 +44,6 @@ RUN docker-php-ext-install \
     ghostscript \
     imagemagick \
     && docker-php-ext-install intl gd
-
-
-# Copy wkhtmltopdf binary from the dedicated image
-COPY --from=wkhtml /bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
-
-# Ensure binary is executable
-RUN chmod +x /usr/local/bin/wkhtmltopdf
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -70,4 +63,7 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
-EXPOSE 9000    
+RUN apt-get update && apt-get install -y cron
+
+EXPOSE 9000
+CMD ["php-fpm"]
