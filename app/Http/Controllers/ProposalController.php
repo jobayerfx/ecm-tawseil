@@ -23,7 +23,6 @@ use App\Models\InvoiceSetting;
 use App\DataTables\ProposalDataTable;
 use App\Http\Requests\Proposal\StoreRequest;
 use App\Models\Lead;
-use Dompdf\Dompdf;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 

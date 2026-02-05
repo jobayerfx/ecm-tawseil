@@ -65,6 +65,7 @@ use App\Models\ProjectMilestone;
 use App\Events\NewUserEvent;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Routing\Exceptions\InvalidSignatureException;
+use Mpdf\Mpdf;
 
 class HomeController extends Controller
 {
@@ -537,8 +538,6 @@ class HomeController extends Controller
 
     public function taskboard(Request $request, $hash)
     {
-
-
         $project = Project::where('hash', $hash)->firstOrFail();
         $this->company = $project->company;
         $this->pageTitle = $project->project_name . ' ' . __('modules.tasks.taskBoard');
@@ -1143,11 +1142,104 @@ class HomeController extends Controller
         $this->company = $this->proposal->company;
         App::setLocale($this->company->locale ?? 'en');
 
-        $pdfOption = $this->domPdfObjectProposalDownload($id);
-        $pdf = $pdfOption['pdf'];
-        $filename = $pdfOption['fileName'];
+        return $this->mPdfObjectForDownload($id);
+        // $pdf = $pdfOption['pdf'];
+        // $filename = $pdfOption['fileName'];
 
-        return $pdf->download($filename . '.pdf');
+        // return $pdf->download($filename . '.pdf');
+    }
+
+    public function mPdfObjectForDownload($id)
+    {
+        $this->proposal = Proposal::where('hash', $id)->firstOrFail();
+        $this->company = $this->proposal->company;
+        $this->discount = 0;
+
+        if ($this->proposal->discount > 0) {
+            if ($this->proposal->discount_type == 'percent') {
+                $this->discount = (($this->proposal->discount / 100) * $this->proposal->sub_total);
+            } else {
+                $this->discount = $this->proposal->discount;
+            }
+        }
+
+        $this->taxes = ProposalItem::where('type', 'tax')
+            ->where('proposal_id', $this->proposal->id)
+            ->get();
+
+        $items = ProposalItem::whereNotNull('taxes')
+            ->where('proposal_id', $this->proposal->id)
+            ->get();
+
+        $taxList = array();
+
+        foreach ($items as $item) {
+
+            foreach (json_decode($item->taxes) as $tax) {
+                $this->tax = ProposalItem::taxbyid($tax)->first();
+
+                if ($this->tax) {
+                    if (!isset($taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'])) {
+
+                        if ($this->proposal->calculate_tax == 'after_discount' && $this->discount > 0) {
+                            $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = ($item->amount - ($item->amount / $this->proposal->sub_total) * $this->discount) * ($this->tax->rate_percent / 100);
+                        } else {
+                            $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $item->amount * ($this->tax->rate_percent / 100);
+                        }
+                    } else {
+                        if ($this->proposal->calculate_tax == 'after_discount' && $this->discount > 0) {
+                            $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] + (($item->amount - ($item->amount / $this->proposal->sub_total) * $this->discount) * ($this->tax->rate_percent / 100));
+                        } else {
+                            $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] + ($item->amount * ($this->tax->rate_percent / 100));
+                        }
+                    }
+                }
+            }
+        }
+
+        $this->taxes = $taxList;
+        $this->invoiceSetting = $this->company->invoiceSetting;
+
+        App::setLocale($this->invoiceSetting->locale ?? 'en');
+        Carbon::setLocale($this->invoiceSetting->locale ?? 'en');
+
+        $templateView = 'proposals.pdf.' . $this->invoiceSetting->template;
+        
+        if (!view()->exists($templateView)) {
+            throw new \Exception('Template view not found: ' . $templateView);
+        }
+
+        $html = view($templateView, $this->data)->render();
+
+        $commonCssPath = resource_path('views/proposals/pdf/css/common-pdf.css');
+        $mainCssPath   = resource_path('views/proposals/pdf/css/' . $this->invoiceSetting->template . '.css');
+        
+        $commonCss = file_exists($commonCssPath) ? file_get_contents($commonCssPath) : '';
+        $mainCss   = file_exists($mainCssPath) ? file_get_contents($mainCssPath) : '';
+        
+        
+        $tempDir = storage_path('app/mpdf-temp'); 
+        if (!file_exists($tempDir)) mkdir($tempDir, 0755, true);        
+        
+        $mpdf = new Mpdf([
+            'tempDir' => $tempDir,
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'default_font' => 'dejavusans',
+            'autoScriptToLang' => true,
+            'autoLangToFont' => true,
+        ]);
+        $mpdf->debug = true;
+        $mpdf->showImageErrors = true;
+        $mpdf->SetCompression(false);
+        $mpdf->WriteHTML($commonCss . $mainCss, \Mpdf\HTMLParserMode::HEADER_CSS);
+        $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
+
+        $filename = __('modules.lead.proposal') . '-' . $this->proposal->id;
+
+        return response($mpdf->Output($filename . '.pdf', 'S'))
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename='.$filename.'.pdf');
     }
 
     public function invoicePaymentfailed($invoiceId)
