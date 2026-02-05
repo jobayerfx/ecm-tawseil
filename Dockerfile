@@ -71,8 +71,5 @@ RUN echo "* * * * * www-data /usr/local/bin/php /var/www/html/artisan schedule:r
     && chmod 0644 /etc/cron.d/laravel \
     && crontab /etc/cron.d/laravel
 
-# Supervisor
-COPY docker/ecm/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
 EXPOSE 9000
-CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-n"]
