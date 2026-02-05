@@ -63,7 +63,16 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
+# Install cron
 RUN apt-get update && apt-get install -y cron
 
+# Register Laravel scheduler
+RUN echo "* * * * * www-data /usr/local/bin/php /var/www/html/artisan schedule:run >> /dev/null 2>&1" > /etc/cron.d/laravel \
+    && chmod 0644 /etc/cron.d/laravel \
+    && crontab /etc/cron.d/laravel
+
+# Supervisor
+COPY docker/ecm/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 EXPOSE 9000
-CMD ["php-fpm"]
+CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
